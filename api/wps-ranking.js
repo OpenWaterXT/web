@@ -40,7 +40,8 @@ export default async function handler(req, res) {
     });
 
     const html = await response.text();
-    const rows = parseRankingHtml(html, {
+
+    const meta = {
       type,
       list,
       gender,
@@ -48,7 +49,9 @@ export default async function handler(req, res) {
       sportClass,
       course,
       sourceUrl: url
-    });
+    };
+
+    const rows = parseRankingHtml(html, meta);
 
     return res.status(200).json({
       ok: response.ok && rows.length > 0,
@@ -56,11 +59,21 @@ export default async function handler(req, res) {
       status: response.status,
       count: rows.length,
       data: rows,
+      debug: {
+        htmlLength: html.length,
+        hasRank: html.includes("Rank"),
+        hasName: html.includes("Name"),
+        hasNpc: html.includes("NPC"),
+        hasTime: html.includes("Time"),
+        tableCount: (html.match(/<table/gi) || []).length,
+        trCount: (html.match(/<tr/gi) || []).length,
+        tdCount: (html.match(/<td/gi) || []).length
+      },
       message:
         rows.length > 0
           ? "Ranking leído correctamente desde la URL HTML pública de IPC Services."
           : "La API ha leído la página, pero no ha encontrado filas de ranking.",
-      preview: rows.length === 0 ? html.slice(0, 1000) : undefined
+      preview: rows.length === 0 ? html.slice(0, 2000) : undefined
     });
   } catch (error) {
     return res.status(500).json({
@@ -78,13 +91,21 @@ function safe(value) {
 }
 
 function parseRankingHtml(html, meta) {
+  if (!html || typeof html !== "string") return [];
+
+  let rows = [];
+
+  rows = parseByTables(html, meta);
+
+  if (rows.length === 0) {
+    rows = parseBySimpleRows(html, meta);
+  }
+
+  return rows;
+}
+
+function parseByTables(html, meta) {
   const rows = [];
-
-  if (!html || typeof html !== "string") return rows;
-
-  const titleMatch = html.match(/<h[1-6][^>]*>\s*([^<]*Rankings[^<]*)\s*<\/h[1-6]>/i);
-  const pageTitle = titleMatch ? cleanText(titleMatch[1]) : "";
-
   const tableMatches = html.match(/<table[\s\S]*?<\/table>/gi) || [];
 
   for (const table of tableMatches) {
@@ -92,32 +113,57 @@ function parseRankingHtml(html, meta) {
 
     if (trMatches.length < 2) continue;
 
-    const headers = extractCells(trMatches[0]).map(cleanText);
-    const headerText = headers.join(" ").toLowerCase();
+    let headers = [];
 
-    const looksLikeRankingTable =
-      headerText.includes("rank") &&
-      headerText.includes("name") &&
-      headerText.includes("npc") &&
-      headerText.includes("time");
+    for (let h = 0; h < Math.min(5, trMatches.length); h++) {
+      const possibleHeaders = extractCells(trMatches[h]).map(cleanText);
+      const joined = possibleHeaders.join(" ").toLowerCase();
 
-    if (!looksLikeRankingTable) continue;
+      if (
+        joined.includes("rank") &&
+        joined.includes("name") &&
+        joined.includes("npc") &&
+        joined.includes("time")
+      ) {
+        headers = possibleHeaders;
+        trMatches.splice(0, h + 1);
+        break;
+      }
+    }
 
-    for (let i = 1; i < trMatches.length; i++) {
-      const cells = extractCells(trMatches[i]).map(cleanText);
+    if (!headers.length) {
+      headers = ["Rank", "Name", "NPC", "Birth", "Time", "Date", "City", "Country"];
+    }
+
+    for (const tr of trMatches) {
+      const cells = extractCells(tr).map(cleanText).filter(Boolean);
 
       if (cells.length < 5) continue;
 
-      const rawRow = {};
-      headers.forEach((header, index) => {
-        rawRow[normalizeHeader(header)] = cells[index] || "";
-      });
+      const normalized = normalizeFromCells(cells, meta);
 
-      const normalized = normalizeRankingRow(rawRow, meta, pageTitle);
-
-      if (normalized.athlete && normalized.time) {
+      if (isValidRankingRow(normalized)) {
         rows.push(normalized);
       }
+    }
+  }
+
+  return rows;
+}
+
+function parseBySimpleRows(html, meta) {
+  const rows = [];
+  const trMatches = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+
+  for (const tr of trMatches) {
+    const cells = extractCells(tr).map(cleanText).filter(Boolean);
+
+    if (cells.length < 5) continue;
+
+    const normalized = normalizeFromCells(cells, meta);
+
+    if (isValidRankingRow(normalized)) {
+      rows.push(normalized);
     }
   }
 
@@ -145,71 +191,67 @@ function cleanText(value) {
     .trim();
 }
 
-function normalizeHeader(header) {
-  const h = String(header || "").toLowerCase().trim();
-
-  if (h === "rank") return "rank";
-  if (h === "name" || h.includes("athlete") || h.includes("swimmer")) return "athlete";
-  if (h === "npc" || h.includes("country code")) return "npc";
-  if (h === "birth" || h.includes("year")) return "birth";
-  if (h === "time" || h.includes("result")) return "time";
-  if (h === "date") return "date";
-  if (h === "city") return "city";
-  if (h === "country") return "country";
-
-  return h.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-}
-
-function normalizeRankingRow(row, meta, pageTitle) {
-  const classCode = normalizeClass(meta.sportClass);
-  const genderLabel = normalizeGender(meta.gender);
-  const eventLabel = normalizeEvent(meta.event);
+function normalizeFromCells(cells, meta) {
+  const rank = cells[0] || "";
+  const athlete = cells[1] || "";
+  const npc = cells[2] || "";
+  const birth = cells[3] || "";
+  const time = cells[4] || "";
+  const date = cells[5] || "";
+  const city = cells[6] || "";
+  const country = cells[7] || "";
 
   return {
-    rank: row.rank || "",
-    athlete: normalizeName(row.athlete || ""),
-    npc: normalizeNpc(row.npc || ""),
-    birth: row.birth || "",
-    gender: genderLabel,
-    event: eventLabel,
-    class: classCode,
-    time: row.time || "",
-    date: row.date || "",
-    city: row.city || "",
-    country: row.country || "",
+    rank,
+    athlete,
+    npc: normalizeNpc(npc),
+    birth,
+    gender: normalizeGender(meta.gender),
+    event: normalizeEvent(meta.event),
+    class: normalizeClass(meta.sportClass),
+    time,
+    date,
+    city,
+    country,
     course: normalizeCourse(meta.course),
     rankingList: meta.list || "",
     rankingType: meta.type || "",
-    pageTitle,
     sourceUrl: meta.sourceUrl,
-    raw: row
+    raw: {
+      cells
+    }
   };
 }
 
-function normalizeName(name) {
-  return String(name || "")
-    .replace(/\s+/g, " ")
-    .trim();
+function isValidRankingRow(row) {
+  if (!row) return false;
+
+  const rankOk = /^(\d+|=|\d+=)$/.test(String(row.rank || "").trim());
+  const athleteOk =
+    row.athlete &&
+    row.athlete.length > 2 &&
+    !/name|rank|cookie|consent|privacy/i.test(row.athlete);
+
+  const npcOk = /^[A-Z]{3}$/.test(row.npc || "");
+  const timeOk = /^\d{1,2}:\d{2}\.\d{2}$|^\d{1,2}\.\d{2}$/.test(row.time || "");
+
+  return athleteOk && npcOk && timeOk && (rankOk || row.rank);
 }
 
 function normalizeNpc(value) {
   const upper = String(value || "").trim().toUpperCase();
-  return /^[A-Z]{3}$/.test(upper) ? upper : upper;
+  const found = upper.match(/\b[A-Z]{3}\b/);
+  return found ? found[0] : upper;
 }
 
 function normalizeClass(value) {
-  const v = String(value || "").toUpperCase().replace(/^0+/, "");
-
-  const match = v.match(/^(S|SB|SM)0?([1-9]|1[0-4])$/i);
-  if (match) return `${match[1].toUpperCase()}${Number(match[2])}`;
-
   const compact = String(value || "").toUpperCase();
-  if (compact.startsWith("S09")) return "S9";
-  if (compact.startsWith("S10")) return "S10";
-  if (compact.startsWith("S11")) return "S11";
-  if (compact.startsWith("S12")) return "S12";
-  if (compact.startsWith("S13")) return "S13";
-  if (compact.startsWith("S14")) return "S14";
+
+  const match = compact.match(/^(S|SB|SM)0?([1-9]|1[0-4])$/i);
+
+  if (match) {
+    return `${match[1].toUpperCase()}${Number(match[2])}`;
+  }
 
   return compact;
 }
