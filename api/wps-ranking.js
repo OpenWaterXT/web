@@ -7,79 +7,83 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const targets = [
-    "https://www.ipc-services.org/sdms/public/rankings/swm",
-    "https://www.ipc-services.org/sdms/web/rankings/swm",
-    "https://www.ipc-services.org/sdms/web/ranking/sw/"
-  ];
+  const query = req.query || {};
 
-  const headers = {
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125 Safari/537.36",
-    "Accept":
-      "text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7",
-    "Accept-Language": "en-US,en;q=0.9,es;q=0.8",
-    "Cache-Control": "no-cache",
-    "Cookie": "SDMS_COOKIE_CONSENT=true; SDMS_COOKIE_CONSENT=1"
-  };
+  const type = safe(query.type || "world");
+  const list = safe(query.list || "1161");
+  const gender = safe(query.gender || "m");
+  const event = safe(query.event || "50mfr--");
+  const sportClass = safe(query.class || "s09");
+  const course = safe(query.course || "lc");
 
-  let attempts = [];
-  let lastHtml = "";
+  const url =
+    `https://www.ipc-services.org/sdms/public/rankings/swm/html` +
+    `/type/${type}` +
+    `/list/${list}` +
+    `/gender/${gender}` +
+    `/evt/${event}` +
+    `/class/${sportClass}` +
+    `/course/${course}`;
 
-  for (const url of targets) {
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers
-      });
-
-      const html = await response.text();
-      lastHtml = html;
-
-      const parsedRows = parseRankingHtml(html);
-
-      attempts.push({
-        url,
-        status: response.status,
-        parsedRows: parsedRows.length,
-        htmlLength: html.length
-      });
-
-      if (response.ok && parsedRows.length > 0) {
-        return res.status(200).json({
-          ok: true,
-          source: url,
-          status: response.status,
-          count: parsedRows.length,
-          data: parsedRows,
-          note: "Ranking leído y parseado correctamente."
-        });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125 Safari/537.36",
+        "Accept":
+          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,es;q=0.8",
+        "Cache-Control": "no-cache",
+        "Cookie": "SDMS_COOKIE_CONSENT=true; SDMS_COOKIE_CONSENT=1"
       }
-    } catch (error) {
-      attempts.push({
-        url,
-        error: error.message || String(error)
-      });
-    }
-  }
+    });
 
-  return res.status(200).json({
-    ok: false,
-    count: 0,
-    data: [],
-    attempts,
-    message:
-      "La API funciona, pero IPC Services no ha devuelto filas de ranking reales. Solo se ha encontrado la estructura inicial/cookies o una app JavaScript.",
-    next_step:
-      "Hace falta localizar el endpoint interno que usa IPC Services para cargar los rankings después de seleccionar filtros.",
-    preview: lastHtml ? lastHtml.slice(0, 1200) : null
-  });
+    const html = await response.text();
+    const rows = parseRankingHtml(html, {
+      type,
+      list,
+      gender,
+      event,
+      sportClass,
+      course,
+      sourceUrl: url
+    });
+
+    return res.status(200).json({
+      ok: response.ok && rows.length > 0,
+      source: url,
+      status: response.status,
+      count: rows.length,
+      data: rows,
+      message:
+        rows.length > 0
+          ? "Ranking leído correctamente desde la URL HTML pública de IPC Services."
+          : "La API ha leído la página, pero no ha encontrado filas de ranking.",
+      preview: rows.length === 0 ? html.slice(0, 1000) : undefined
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      error: error.message || String(error),
+      source: url
+    });
+  }
 }
 
-function parseRankingHtml(html) {
+function safe(value) {
+  return String(value || "")
+    .replace(/[^a-zA-Z0-9_-]/g, "")
+    .trim();
+}
+
+function parseRankingHtml(html, meta) {
   const rows = [];
 
   if (!html || typeof html !== "string") return rows;
+
+  const titleMatch = html.match(/<h[1-6][^>]*>\s*([^<]*Rankings[^<]*)\s*<\/h[1-6]>/i);
+  const pageTitle = titleMatch ? cleanText(titleMatch[1]) : "";
 
   const tableMatches = html.match(/<table[\s\S]*?<\/table>/gi) || [];
 
@@ -88,32 +92,32 @@ function parseRankingHtml(html) {
 
     if (trMatches.length < 2) continue;
 
-    const headerCells = extractCells(trMatches[0]).map(cleanText);
+    const headers = extractCells(trMatches[0]).map(cleanText);
+    const headerText = headers.join(" ").toLowerCase();
 
-    if (!headerCells.length) continue;
+    const looksLikeRankingTable =
+      headerText.includes("rank") &&
+      headerText.includes("name") &&
+      headerText.includes("npc") &&
+      headerText.includes("time");
+
+    if (!looksLikeRankingTable) continue;
 
     for (let i = 1; i < trMatches.length; i++) {
       const cells = extractCells(trMatches[i]).map(cleanText);
 
-      if (!cells.length) continue;
+      if (cells.length < 5) continue;
 
-      const rowObject = rowFromCells(headerCells, cells);
+      const rawRow = {};
+      headers.forEach((header, index) => {
+        rawRow[normalizeHeader(header)] = cells[index] || "";
+      });
 
-      if (hasUsefulRankingData(rowObject)) {
-        const normalized = normalizeRow(rowObject);
+      const normalized = normalizeRankingRow(rawRow, meta, pageTitle);
 
-        if (isRealRankingRow(normalized)) {
-          rows.push(normalized);
-        }
+      if (normalized.athlete && normalized.time) {
+        rows.push(normalized);
       }
-    }
-  }
-
-  const jsonRows = parseEmbeddedJson(html);
-
-  for (const row of jsonRows) {
-    if (isRealRankingRow(row)) {
-      rows.push(row);
     }
   }
 
@@ -141,202 +145,112 @@ function cleanText(value) {
     .trim();
 }
 
-function rowFromCells(headers, cells) {
-  const row = {};
-
-  headers.forEach((header, index) => {
-    const key = normalizeHeader(header);
-    row[key || `col_${index}`] = cells[index] || "";
-  });
-
-  return row;
-}
-
 function normalizeHeader(header) {
   const h = String(header || "").toLowerCase().trim();
 
-  if (/rank|position|pos/.test(h)) return "rank";
-  if (/athlete|name|competitor|swimmer/.test(h)) return "athlete";
-  if (/npc|country|nation|federation/.test(h)) return "npc";
-  if (/gender|sex/.test(h)) return "gender";
-  if (/event|discipline|race|stroke/.test(h)) return "event";
-  if (/class|sport class|classification/.test(h)) return "class";
-  if (/time|result|mark|performance/.test(h)) return "time";
-  if (/points|score/.test(h)) return "points";
-  if (/date/.test(h)) return "date";
-  if (/competition|meet|championship|event name/.test(h)) return "competition";
-  if (/city|location|venue/.test(h)) return "location";
+  if (h === "rank") return "rank";
+  if (h === "name" || h.includes("athlete") || h.includes("swimmer")) return "athlete";
+  if (h === "npc" || h.includes("country code")) return "npc";
+  if (h === "birth" || h.includes("year")) return "birth";
+  if (h === "time" || h.includes("result")) return "time";
+  if (h === "date") return "date";
+  if (h === "city") return "city";
+  if (h === "country") return "country";
 
   return h.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 }
 
-function hasUsefulRankingData(row) {
-  const values = Object.values(row).join(" ");
-
-  if (/SDMS_COOKIE_CONSENT/i.test(values)) return false;
-  if (/cookie|consent|privacy|path/i.test(values) && !/S\d|SB\d|SM\d/i.test(values)) return false;
-
-  return (
-    /S\d{1,2}|SB\d{1,2}|SM\d{1,2}/i.test(values) ||
-    /\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2}/.test(values) ||
-    row.athlete ||
-    row.event
-  );
-}
-
-function normalizeRow(row) {
-  const raw = { ...row };
-
-  const eventText = raw.event || "";
-  const classText = raw.class || eventText || Object.values(raw).join(" ");
-  const detectedClass = detectClass(classText);
+function normalizeRankingRow(row, meta, pageTitle) {
+  const classCode = normalizeClass(meta.sportClass);
+  const genderLabel = normalizeGender(meta.gender);
+  const eventLabel = normalizeEvent(meta.event);
 
   return {
-    rank: raw.rank || "",
-    athlete: raw.athlete || raw.name || "",
-    npc: normalizeNpc(raw.npc || raw.country || ""),
-    gender: normalizeGender(raw.gender || ""),
-    event: cleanEvent(eventText),
-    class: detectedClass || "",
-    time: raw.time || raw.result || raw.mark || "",
-    points: raw.points || "",
-    date: raw.date || "",
-    competition: raw.competition || "",
-    location: raw.location || "",
-    raw
+    rank: row.rank || "",
+    athlete: normalizeName(row.athlete || ""),
+    npc: normalizeNpc(row.npc || ""),
+    birth: row.birth || "",
+    gender: genderLabel,
+    event: eventLabel,
+    class: classCode,
+    time: row.time || "",
+    date: row.date || "",
+    city: row.city || "",
+    country: row.country || "",
+    course: normalizeCourse(meta.course),
+    rankingList: meta.list || "",
+    rankingType: meta.type || "",
+    pageTitle,
+    sourceUrl: meta.sourceUrl,
+    raw: row
   };
 }
 
-function isRealRankingRow(row) {
-  const joined = Object.values(row.raw || row).join(" ");
-
-  if (/SDMS_COOKIE_CONSENT/i.test(joined)) return false;
-  if (/cookie|consent|privacy/i.test(joined) && !row.time && !row.class) return false;
-
-  const hasAthlete = row.athlete && row.athlete.length > 2;
-  const hasTime = /\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2}/.test(row.time || "");
-  const hasClass = /^(S|SB|SM)(1[0-4]|[1-9])$/.test(row.class || "");
-  const hasEvent = row.event && /free|back|breast|fly|medley|freestyle|espalda|braza|mariposa|estilos/i.test(row.event);
-
-  return hasAthlete && (hasTime || hasClass || hasEvent);
-}
-
-function detectClass(text) {
-  const t = String(text || "").toUpperCase();
-  const match = t.match(/\b(SB|SM|S)\s*(1[0-4]|[1-9])\b/);
-
-  if (!match) return "";
-
-  return `${match[1]}${match[2]}`;
-}
-
-function cleanEvent(event) {
-  return String(event || "")
-    .replace(/\b(SB|SM|S)\s*(1[0-4]|[1-9])\b/gi, "")
+function normalizeName(name) {
+  return String(name || "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function normalizeGender(value) {
-  const v = String(value || "").toLowerCase().trim();
+function normalizeNpc(value) {
+  const upper = String(value || "").trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(upper) ? upper : upper;
+}
 
-  if (["m", "male", "men", "man", "masculino"].includes(v)) return "Men";
-  if (["f", "female", "women", "woman", "femenino"].includes(v)) return "Women";
+function normalizeClass(value) {
+  const v = String(value || "").toUpperCase().replace(/^0+/, "");
+
+  const match = v.match(/^(S|SB|SM)0?([1-9]|1[0-4])$/i);
+  if (match) return `${match[1].toUpperCase()}${Number(match[2])}`;
+
+  const compact = String(value || "").toUpperCase();
+  if (compact.startsWith("S09")) return "S9";
+  if (compact.startsWith("S10")) return "S10";
+  if (compact.startsWith("S11")) return "S11";
+  if (compact.startsWith("S12")) return "S12";
+  if (compact.startsWith("S13")) return "S13";
+  if (compact.startsWith("S14")) return "S14";
+
+  return compact;
+}
+
+function normalizeGender(value) {
+  const v = String(value || "").toLowerCase();
+
+  if (v === "m") return "Men";
+  if (v === "f") return "Women";
+  if (v === "x" || v === "e") return "Either";
 
   return value || "";
 }
 
-function normalizeNpc(value) {
-  const v = String(value || "").trim();
-  const upper = v.toUpperCase();
+function normalizeCourse(value) {
+  const v = String(value || "").toLowerCase();
 
-  if (/^[A-Z]{3}$/.test(upper)) return upper;
+  if (v === "lc") return "Long Course";
+  if (v === "sc") return "Short Course";
+  if (v === "ow") return "Open Water";
+
+  return value || "";
+}
+
+function normalizeEvent(value) {
+  const v = String(value || "").toLowerCase();
 
   const map = {
-    SPAIN: "ESP",
-    ESPAÑA: "ESP",
-    ESPANA: "ESP",
-    FRANCE: "FRA",
-    ITALY: "ITA",
-    GERMANY: "GER",
-    GREAT_BRITAIN: "GBR",
-    "GREAT BRITAIN": "GBR",
-    UNITED_KINGDOM: "GBR",
-    "UNITED KINGDOM": "GBR",
-    USA: "USA",
-    "UNITED STATES": "USA",
-    "UNITED STATES OF AMERICA": "USA",
-    BRAZIL: "BRA",
-    PORTUGAL: "POR",
-    NETHERLANDS: "NED",
-    AUSTRALIA: "AUS",
-    CANADA: "CAN",
-    JAPAN: "JPN",
-    CHINA: "CHN",
-    MEXICO: "MEX",
-    ARGENTINA: "ARG",
-    COLOMBIA: "COL",
-    CHILE: "CHI"
+    "50mfr--": "50 m Freestyle",
+    "100mfr-": "100 m Freestyle",
+    "200mfr-": "200 m Freestyle",
+    "400mfr-": "400 m Freestyle",
+    "50mba--": "50 m Backstroke",
+    "100mba-": "100 m Backstroke",
+    "50mbr--": "50 m Breaststroke",
+    "100mbr-": "100 m Breaststroke",
+    "50mbu--": "50 m Butterfly",
+    "100mbu-": "100 m Butterfly",
+    "150mim-": "150 m Individual Medley",
+    "200mim-": "200 m Individual Medley"
   };
 
-  const key = upper.replace(/\s+/g, "_");
-
-  if (map[key]) return map[key];
-  if (map[upper]) return map[upper];
-
-  const embedded = upper.match(/\b[A-Z]{3}\b/);
-  if (embedded) return embedded[0];
-
-  return v;
-}
-
-function parseEmbeddedJson(html) {
-  const rows = [];
-
-  const scriptMatches = html.match(/<script[\s\S]*?<\/script>/gi) || [];
-
-  for (const script of scriptMatches) {
-    const text = script.replace(/<script[^>]*>/i, "").replace(/<\/script>/i, "");
-
-    if (/SDMS_COOKIE_CONSENT/i.test(text) && !/athlete|ranking|result|sportClass/i.test(text)) {
-      continue;
-    }
-
-    if (!/rank|athlete|swimmer|result|time|sportClass|classification/i.test(text)) {
-      continue;
-    }
-
-    const objectMatches = text.match(/\{[\s\S]*?\}/g) || [];
-
-    for (const objText of objectMatches) {
-      try {
-        const obj = JSON.parse(objText);
-        const flat = flattenObject(obj);
-
-        if (hasUsefulRankingData(flat)) {
-          rows.push(normalizeRow(flat));
-        }
-      } catch {
-        // Ignorar objetos no válidos
-      }
-    }
-  }
-
-  return rows;
-}
-
-function flattenObject(obj, prefix = "", out = {}) {
-  if (!obj || typeof obj !== "object") return out;
-
-  for (const [key, value] of Object.entries(obj)) {
-    const newKey = prefix ? `${prefix}_${key}` : key;
-
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      flattenObject(value, newKey, out);
-    } else if (!Array.isArray(value)) {
-      out[normalizeHeader(key)] = String(value ?? "");
-    }
-  }
-
-  return out;
+  return map[v] || value || "";
 }
