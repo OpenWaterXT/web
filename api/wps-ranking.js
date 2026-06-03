@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS básico para que el HTML pueda llamar a esta API
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -16,75 +15,72 @@ export default async function handler(req, res) {
 
   const headers = {
     "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125 Safari/537.36",
     "Accept":
       "text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7",
     "Accept-Language": "en-US,en;q=0.9,es;q=0.8",
-    "Cache-Control": "no-cache"
+    "Cache-Control": "no-cache",
+    "Cookie": "SDMS_COOKIE_CONSENT=true; SDMS_COOKIE_CONSENT=1"
   };
 
-  let lastError = null;
-  let lastStatus = null;
-  let lastUrl = null;
-  let html = "";
+  let attempts = [];
+  let lastHtml = "";
 
   for (const url of targets) {
     try {
-      lastUrl = url;
-
       const response = await fetch(url, {
         method: "GET",
         headers
       });
 
-      lastStatus = response.status;
-      const text = await response.text();
+      const html = await response.text();
+      lastHtml = html;
 
-      if (!response.ok) {
-        lastError = `HTTP ${response.status}`;
-        continue;
-      }
+      const parsedRows = parseRankingHtml(html);
 
-      html = text;
-
-      const parsedRows = parseRankingHtml(text);
-
-      return res.status(200).json({
-        ok: true,
-        source: url,
+      attempts.push({
+        url,
         status: response.status,
-        count: parsedRows.length,
-        data: parsedRows,
-        note:
-          parsedRows.length > 0
-            ? "Ranking leído y parseado."
-            : "Se pudo leer la página, pero no se encontraron filas de ranking. Es posible que IPC Services cargue los datos por JavaScript."
+        parsedRows: parsedRows.length,
+        htmlLength: html.length
       });
+
+      if (response.ok && parsedRows.length > 0) {
+        return res.status(200).json({
+          ok: true,
+          source: url,
+          status: response.status,
+          count: parsedRows.length,
+          data: parsedRows,
+          note: "Ranking leído y parseado correctamente."
+        });
+      }
     } catch (error) {
-      lastError = error.message || String(error);
+      attempts.push({
+        url,
+        error: error.message || String(error)
+      });
     }
   }
 
-  return res.status(502).json({
+  return res.status(200).json({
     ok: false,
-    error: "No se pudo leer IPC Services desde el servidor.",
-    lastUrl,
-    lastStatus,
-    lastError,
-    hint:
-      "Si aparece 403, IPC Services está bloqueando la lectura desde servidor. Si aparece count 0, probablemente los datos se cargan con JavaScript y habrá que usar un extractor más avanzado.",
-    preview: html ? html.slice(0, 800) : null
+    count: 0,
+    data: [],
+    attempts,
+    message:
+      "La API funciona, pero IPC Services no ha devuelto filas de ranking reales. Solo se ha encontrado la estructura inicial/cookies o una app JavaScript.",
+    next_step:
+      "Hace falta localizar el endpoint interno que usa IPC Services para cargar los rankings después de seleccionar filtros.",
+    preview: lastHtml ? lastHtml.slice(0, 1200) : null
   });
 }
 
 function parseRankingHtml(html) {
   const rows = [];
 
-  if (!html || typeof html !== "string") {
-    return rows;
-  }
+  if (!html || typeof html !== "string") return rows;
 
-  // Intento 1: buscar tablas HTML normales
   const tableMatches = html.match(/<table[\s\S]*?<\/table>/gi) || [];
 
   for (const table of tableMatches) {
@@ -93,24 +89,32 @@ function parseRankingHtml(html) {
     if (trMatches.length < 2) continue;
 
     const headerCells = extractCells(trMatches[0]).map(cleanText);
+
     if (!headerCells.length) continue;
 
     for (let i = 1; i < trMatches.length; i++) {
       const cells = extractCells(trMatches[i]).map(cleanText);
+
       if (!cells.length) continue;
 
       const rowObject = rowFromCells(headerCells, cells);
 
       if (hasUsefulRankingData(rowObject)) {
-        rows.push(normalizeRow(rowObject));
+        const normalized = normalizeRow(rowObject);
+
+        if (isRealRankingRow(normalized)) {
+          rows.push(normalized);
+        }
       }
     }
   }
 
-  // Intento 2: buscar JSON embebido en la página
-  if (rows.length === 0) {
-    const jsonRows = parseEmbeddedJson(html);
-    rows.push(...jsonRows);
+  const jsonRows = parseEmbeddedJson(html);
+
+  for (const row of jsonRows) {
+    if (isRealRankingRow(row)) {
+      rows.push(row);
+    }
   }
 
   return rows;
@@ -118,6 +122,7 @@ function parseRankingHtml(html) {
 
 function extractCells(trHtml) {
   const matches = trHtml.match(/<t[dh][^>]*>[\s\S]*?<\/t[dh]>/gi) || [];
+
   return matches.map((cell) =>
     cell
       .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -167,6 +172,10 @@ function normalizeHeader(header) {
 
 function hasUsefulRankingData(row) {
   const values = Object.values(row).join(" ");
+
+  if (/SDMS_COOKIE_CONSENT/i.test(values)) return false;
+  if (/cookie|consent|privacy|path/i.test(values) && !/S\d|SB\d|SM\d/i.test(values)) return false;
+
   return (
     /S\d{1,2}|SB\d{1,2}|SM\d{1,2}/i.test(values) ||
     /\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2}/.test(values) ||
@@ -198,10 +207,22 @@ function normalizeRow(row) {
   };
 }
 
+function isRealRankingRow(row) {
+  const joined = Object.values(row.raw || row).join(" ");
+
+  if (/SDMS_COOKIE_CONSENT/i.test(joined)) return false;
+  if (/cookie|consent|privacy/i.test(joined) && !row.time && !row.class) return false;
+
+  const hasAthlete = row.athlete && row.athlete.length > 2;
+  const hasTime = /\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2}/.test(row.time || "");
+  const hasClass = /^(S|SB|SM)(1[0-4]|[1-9])$/.test(row.class || "");
+  const hasEvent = row.event && /free|back|breast|fly|medley|freestyle|espalda|braza|mariposa|estilos/i.test(row.event);
+
+  return hasAthlete && (hasTime || hasClass || hasEvent);
+}
+
 function detectClass(text) {
   const t = String(text || "").toUpperCase();
-
-  // Primero clases largas para evitar confundir S con SM/SB
   const match = t.match(/\b(SB|SM|S)\s*(1[0-4]|[1-9])\b/);
 
   if (!match) return "";
@@ -272,11 +293,14 @@ function normalizeNpc(value) {
 function parseEmbeddedJson(html) {
   const rows = [];
 
-  // Busca arrays u objetos grandes que puedan estar embebidos
   const scriptMatches = html.match(/<script[\s\S]*?<\/script>/gi) || [];
 
   for (const script of scriptMatches) {
     const text = script.replace(/<script[^>]*>/i, "").replace(/<\/script>/i, "");
+
+    if (/SDMS_COOKIE_CONSENT/i.test(text) && !/athlete|ranking|result|sportClass/i.test(text)) {
+      continue;
+    }
 
     if (!/rank|athlete|swimmer|result|time|sportClass|classification/i.test(text)) {
       continue;
@@ -287,7 +311,6 @@ function parseEmbeddedJson(html) {
     for (const objText of objectMatches) {
       try {
         const obj = JSON.parse(objText);
-
         const flat = flattenObject(obj);
 
         if (hasUsefulRankingData(flat)) {
