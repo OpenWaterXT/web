@@ -9,5 +9,7 @@
   "dependencies": {
     "xlsx": "^0.18.5"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
