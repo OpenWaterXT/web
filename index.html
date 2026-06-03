@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Para Swimming Data Lab 2026</title>
+<style>
+:root{--bg:#08111f;--panel:#101c2e;--panel2:#13243b;--muted:#9fb2c9;--text:#f5f8fc;--line:#29405f;--accent:#64d2ff;--good:#70e5a1;--warn:#ffd166;--bad:#ff7b7b;--chip:#1b3352;--shadow:0 20px 50px rgba(0,0,0,.35)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#173459 0,#08111f 42%,#050a12 100%);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}a{color:var(--accent)}header{position:sticky;top:0;z-index:10;background:rgba(8,17,31,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.wrap{max-width:1500px;margin:0 auto;padding:18px}.brand{display:flex;justify-content:space-between;gap:16px;align-items:center}.title h1{margin:0;font-size:28px;letter-spacing:.2px}.title p{margin:6px 0 0;color:var(--muted);font-size:14px}.badge{background:linear-gradient(135deg,#0d6efd,#64d2ff);color:white;border-radius:999px;padding:9px 13px;font-weight:700;white-space:nowrap}.tabs{display:flex;gap:8px;overflow:auto;padding:10px 18px 16px;max-width:1500px;margin:0 auto}.tab{border:1px solid var(--line);background:#0c1728;color:var(--text);padding:10px 13px;border-radius:13px;cursor:pointer;white-space:nowrap}.tab.active{background:var(--accent);color:#001527;border-color:var(--accent);font-weight:800}.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr 1fr}@media(max-width:1000px){.cards,.two,.three{grid-template-columns:1fr}.brand{align-items:flex-start;flex-direction:column}}.card{background:linear-gradient(180deg,rgba(19,36,59,.98),rgba(12,23,40,.98));border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:18px}.card h2,.card h3{margin:0 0 12px}.kpi{font-size:32px;font-weight:900}.sub{color:var(--muted);font-size:13px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:10px 0 14px}.field{display:flex;flex-direction:column;gap:6px;min-width:150px;flex:1}.field.small{max-width:170px}.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}input,select,textarea{width:100%;background:#07111f;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 11px;font:inherit}textarea{min-height:140px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--accent);color:#001527;font-weight:800;cursor:pointer}.btn.secondary{background:#203755;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#4b1f2a;color:#ffd7df;border:1px solid #7a2f41}.btn.good{background:var(--good);color:#032111}.pill{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:#d9e7f7;margin:2px;font-size:12px}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px;max-height:560px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid rgba(41,64,95,.75);padding:9px 10px;text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#10213a;z-index:1;color:#cfe8ff}tr:hover td{background:rgba(100,210,255,.06)}.right{text-align:right}.muted{color:var(--muted)}.ok{color:var(--good);font-weight:800}.warn{color:var(--warn);font-weight:800}.bad{color:var(--bad);font-weight:800}.section{display:none}.section.active{display:block}.note{border-left:4px solid var(--accent);padding:10px 12px;background:rgba(100,210,255,.08);border-radius:12px;color:#dcebff}.mini{font-size:12px}.barBox{height:220px;display:flex;align-items:end;gap:7px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px;margin-top:8px;overflow:hidden}.bar{background:linear-gradient(180deg,#64d2ff,#0d6efd);min-width:18px;border-radius:8px 8px 0 0;position:relative}.bar span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) rotate(-45deg);font-size:10px;color:#cfe8ff;transform-origin:left bottom;white-space:nowrap}.report{white-space:pre-wrap;line-height:1.55;background:#07111f;border:1px solid var(--line);border-radius:14px;padding:14px}.hidden{display:none!important}.footer{padding:28px;color:var(--muted);text-align:center}.sourceBox{display:flex;gap:10px;flex-wrap:wrap}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.drop{border:1px dashed #5d7da7;border-radius:16px;padding:18px;text-align:center;background:rgba(255,255,255,.03)}.liveFrame{width:100%;height:720px;border:1px solid var(--line);border-radius:18px;background:#fff}.code{white-space:pre-wrap;background:#06101d;border:1px solid var(--line);border-radius:14px;padding:12px;max-height:300px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}.status{padding:10px 12px;border-radius:12px;background:rgba(255,209,102,.10);border-left:4px solid var(--warn)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap brand">
+    <div class="title"><h1>Para Swimming Data Lab 2026</h1><p>Rankings, atletas, marcas, comparativas, proyecciones y calculadora de puntos WPS, con módulo de conexión en vivo a la web oficial.</p></div>
+    <div class="badge">WPS Data Lab · Live/Offline 2026</div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main class="wrap">
+<section class="section active" id="dashboard">
+  <div class="grid cards">
+    <div class="card"><div class="sub">Marcas cargadas</div><div class="kpi" id="kpiMarks">0</div></div>
+    <div class="card"><div class="sub">Atletas</div><div class="kpi" id="kpiAthletes">0</div></div>
+    <div class="card"><div class="sub">Eventos/clases WPS</div><div class="kpi" id="kpiParams">0</div></div>
+    <div class="card"><div class="sub">Records cargados</div><div class="kpi" id="kpiRecords">0</div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="card"><h2>Acceso rápido</h2><div class="sourceBox"><button class="btn" onclick="go('live')">Ranking oficial en vivo</button><button class="btn secondary" onclick="go('import')">Importar rankings / marcas</button><button class="btn secondary" onclick="go('points')">Calculadora puntos</button><button class="btn secondary" onclick="go('athletes')">Buscar atleta</button><button class="btn secondary" onclick="go('projection')">Proyección</button><a class="btn secondary" href="https://www.paralympic.org/swimming/rankings" target="_blank">Abrir ranking oficial</a><a class="btn secondary" href="https://www.paralympic.org/swimming/records" target="_blank">Abrir records oficiales</a></div><p class="note" style="margin-top:14px">La app intenta trabajar en vivo con el ranking oficial de World Para Swimming. Si el navegador o la web oficial bloquean la extracción directa por CORS/anti-bot, puedes usar el visor integrado, abrir la página oficial o conectar un proxy/API propio para importar datos automáticamente sin CSV manual.</p></div>
+    <div class="card"><h2>Últimas mejores marcas cargadas</h2><div class="tableWrap"><table><thead><tr><th>Atleta</th><th>NPC</th><th>Prueba</th><th>Clase</th><th>Tiempo</th><th>Puntos</th></tr></thead><tbody id="dashBest"></tbody></table></div></div>
+  </div>
+</section>
+<section class="section" id="live">
+  <div class="grid two">
+    <div class="card">
+      <h2>Ranking oficial en vivo</h2>
+      <p class="muted">La web de IPC Services bloquea la carga dentro de cuadros/iframe: por eso aparece el icono de prohibido. Esta versión elimina el visor y usa el sistema correcto: lectura mediante conector API.</p>
+      <div class="note"><strong>Modo directo real:</strong> despliega el paquete en Vercel y pulsa “Leer ranking en directo”. El HTML llamará a <span class="mono">/api/wps-ranking</span>, que lee IPC Services desde servidor y devuelve datos importables.</div>
+      <div class="toolbar" style="margin-top:14px">
+        <button class="btn good" onclick="fetchLiveJson()">Leer ranking en directo</button>
+        <button class="btn secondary" onclick="autoLiveImport()">Auto-detectar conector</button>
+        <button class="btn secondary" onclick="saveLiveApi()">Guardar URL</button>
+      </div>
+      <div class="field"><label>URL del conector LIVE</label><input id="liveApiUrl" placeholder="/api/wps-ranking" /></div>
+      <p id="liveApiMsg" class="note">Si estás abriendo el archivo como HTML local, puede no funcionar por CORS. Para directo real usa el ZIP de Vercel incluido. El iframe ya no se usa porque IPC Services no permite mostrarse dentro del cuadro blanco.</p>
+    </div>
+    <div class="card">
+      <h2>Qué hace el conector</h2>
+      <p class="muted">El conector intenta leer la ruta pública de rankings de IPC Services desde servidor, parsear tablas/HTML/JSON y devolver filas normalizadas.</p>
+      <div class="code">Fuente objetivo:
+https://www.ipc-services.org/sdms/public/rankings/swm
+
+Respuesta esperada por el HTML:
+{
+  "ok": true,
+  "count": 123,
+  "data": [
+    {
+      "athlete": "Name Surname",
+      "npc": "ESP",
+      "gender": "Men",
+      "event": "50 m Freestyle",
+      "class": "S9",
+      "time": "25.10",
+      "date": "2026-03-02",
+      "competition": "Competition name",
+      "rank": 1,
+      "points": 987
+    }
+  ]
+}</div>
+      <p class="muted mini">Si IPC Services devuelve 403 o cambia su estructura interna, habrá que ajustar el extractor del archivo <span class="mono">api/wps-ranking.js</span>. No hay forma limpia de saltarse X-Frame/CORS solo con HTML local.</p>
+    </div>
+  </div>
+</section>
+<section class="section" id="import">
+  <div class="grid two">
+    <div class="card"><h2>Importar marcas/rankings</h2><p class="muted">Pega CSV/TSV o carga un archivo .csv/.tsv/.txt/.xlsx. El sistema importa automáticamente al seleccionar el archivo, detecta cabeceras, conserva atleta/país/marca y valida la clase para evitar errores tipo S50.</p><div class="drop"><input type="file" id="csvFile" accept=".csv,.tsv,.txt,.xlsx,.xls" /></div><textarea id="csvText" placeholder="Athlete,NPC,Gender,Event,Class,Time,Date,Competition,Rank,Points\n..."></textarea><div class="toolbar"><button class="btn" onclick="importCsv()">Importar CSV</button><button class="btn secondary" onclick="loadDemo()">Cargar ejemplo mínimo</button><button class="btn danger" onclick="clearMarks()">Borrar marcas guardadas</button></div><p id="importMsg" class="note"></p></div>
+    <div class="card"><h2>Añadir marca manual</h2><div class="grid two"><div class="field"><label>Atleta</label><input id="mAthlete"></div><div class="field"><label>NPC/País</label><input id="mNpc"></div><div class="field"><label>Género</label><select id="mGender"></select></div><div class="field"><label>Prueba</label><select id="mEvent"></select></div><div class="field"><label>Clase</label><select id="mClass"></select></div><div class="field"><label>Tiempo</label><input id="mTime" placeholder="25.34 o 1:03.25"></div><div class="field"><label>Fecha</label><input id="mDate" type="date"></div><div class="field"><label>Competición</label><input id="mComp"></div></div><div class="toolbar"><button class="btn good" onclick="addManualMark()">Añadir marca</button></div></div>
+  </div>
+</section>
+<section class="section" id="rankings"><div class="card"><h2>Rankings por prueba</h2><div class="toolbar" id="rankFilters"></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Atleta</th><th>NPC</th><th>Género</th><th>Prueba</th><th>Clase</th><th>Tiempo</th><th>Puntos</th><th>Fecha</th><th>Competición</th><th>Etiquetas</th></tr></thead><tbody id="rankBody"></tbody></table></div><div class="toolbar"><button class="btn secondary" onclick="downloadCurrentRanking()">Descargar ranking CSV</button></div></div></section>
+<section class="section" id="athletes"><div class="grid two"><div class="card"><h2>Buscar atletas</h2><div class="toolbar"><div class="field"><label>Nombre, país, prueba o clase</label><input id="athSearch" oninput="renderAthletes()" placeholder="Ej. S9, Spain, 50 m Freestyle..."></div></div><div class="tableWrap"><table><thead><tr><th>Atleta</th><th>NPC</th><th>Marcas</th><th>Mejor punto</th><th>Acción</th></tr></thead><tbody id="athList"></tbody></table></div></div><div class="card"><h2>Ficha competitiva</h2><div id="athProfile" class="muted">Selecciona un atleta para ver todas sus marcas.</div></div></div></section>
+<section class="section" id="compare"><div class="card"><h2>Comparador de atletas</h2><div class="toolbar"><div class="field"><label>Atleta 1</label><select id="cmp1"></select></div><div class="field"><label>Atleta 2</label><select id="cmp2"></select></div><div class="field"><label>Atleta 3</label><select id="cmp3"></select></div><div class="field"><label>Prueba</label><select id="cmpEvent"></select></div><div class="field"><label>Clase</label><select id="cmpClass"></select></div><button class="btn" onclick="renderCompare()">Comparar</button></div><div id="cmpOut"></div></div></section>
+<section class="section" id="projection"><div class="grid two"><div class="card"><h2>Evolución y proyección</h2><div class="toolbar"><div class="field"><label>Género</label><select id="prGender"></select></div><div class="field"><label>Prueba</label><select id="prEvent"></select></div><div class="field"><label>Clase</label><select id="prClass"></select></div><div class="field"><label>Año objetivo</label><input id="prYear" type="number" value="2028"></div><button class="btn" onclick="renderProjection()">Calcular</button></div><div id="projOut"></div></div><div class="card"><h2>Gráfico simple</h2><div id="chart" class="barBox"></div><p class="muted mini">El gráfico usa la mejor marca anual cargada para la combinación seleccionada. Cuantos más años cargues, mejor será la proyección.</p></div></div></section>
+<section class="section" id="points"><div class="grid two"><div class="card"><h2>Calculadora WPS 2026</h2><div class="grid two"><div class="field"><label>Género</label><select id="ptGender"></select></div><div class="field"><label>Prueba</label><select id="ptEvent"></select></div><div class="field"><label>Clase</label><select id="ptClass"></select></div><div class="field"><label>Tiempo → puntos</label><input id="ptTime" placeholder="25.34 o 1:03.25" oninput="calcPoints()"></div><div class="field"><label>Puntos → tiempo</label><input id="ptPoints" placeholder="1000" oninput="calcPoints()"></div></div><div id="ptResult" class="note" style="margin-top:12px"></div></div><div class="card"><h2>Parámetros seleccionados</h2><div id="paramCard"></div></div></div></section>
+<section class="section" id="records"><div class="grid two"><div class="card"><h2>Records oficiales/manuales</h2><p class="muted">Carga un CSV con Gender, Event, Class, Type, Time, Athlete, NPC, Date. Sirve para calcular diferencias contra record mundial/paralímpico u otro estándar.</p><textarea id="recText" placeholder="Gender,Event,Class,Type,Time,Athlete,NPC,Date\nMen,50 m Freestyle,S10,WR,23.00,Example,ESP,2026-01-01"></textarea><div class="toolbar"><button class="btn" onclick="importRecords()">Importar records</button><button class="btn danger" onclick="clearRecords()">Borrar records</button></div></div><div class="card"><h2>Tabla de records</h2><div class="tableWrap"><table><thead><tr><th>Tipo</th><th>Género</th><th>Prueba</th><th>Clase</th><th>Tiempo</th><th>Atleta</th><th>NPC</th><th>Fecha</th></tr></thead><tbody id="recBody"></tbody></table></div></div></div></section>
+<section class="section" id="reports"><div class="card"><h2>Generador de informe / nota de prensa</h2><div class="toolbar"><div class="field"><label>Tipo</label><select id="repType"><option value="press">Nota de prensa</option><option value="technical">Informe técnico</option><option value="academic">Texto académico breve</option></select></div><div class="field"><label>Atleta o filtro</label><input id="repQuery" placeholder="Nombre, prueba, país..."></div><button class="btn" onclick="generateReport()">Generar texto</button><button class="btn secondary" onclick="copyReport()">Copiar</button></div><div id="reportOut" class="report">Carga datos y genera un informe.</div></div></section>
+<section class="section" id="params"><div class="card"><h2>Tabla completa de parámetros WPS 2026</h2><div class="toolbar"><div class="field"><label>Filtro</label><input id="paramFilter" oninput="renderParams()" placeholder="S9, 50 m Freestyle, Women..."></div><button class="btn secondary" onclick="downloadParams()">Descargar parámetros CSV</button></div><div class="tableWrap"><table><thead><tr><th>Género</th><th>Prueba</th><th>Clase</th><th>a</th><th>b</th><th>c</th><th>Tiempo 1000</th></tr></thead><tbody id="paramBody"></tbody></table></div></div></section>
+</main><div class="footer">Generado desde el Excel de puntos World Para Swimming 2026. Modo LIVE: puede leer rankings en directo si se sirve con el proxy/API incluido.</div>
+<script>
+const PARAMS=[{"gender":"Men","event":"50 m Freestyle","class":"S1","a":1200.0,"b":6.190278,"c":515.385,"ref1000Seconds":65.3},{"gender":"Men","event":"50 m Freestyle","class":"S2","a":1200.0,"b":6.190278,"c":433.181,"ref1000Seconds":54.88},{"gender":"Men","event":"50 m Freestyle","class":"S3","a":1200.0,"b":6.190278,"c":333.674,"ref1000Seconds":42.27},{"gender":"Men","event":"50 m Freestyle","class":"S4","a":1200.0,"b":6.190278,"c":268.021,"ref1000Seconds":33.95},{"gender":"Men","event":"50 m Freestyle","class":"S5","a":1200.0,"b":6.190278,"c":244.5,"ref1000Seconds":30.97},{"gender":"Men","event":"50 m Freestyle","class":"S6","a":1200.0,"b":6.190278,"c":228.082,"ref1000Seconds":28.89},{"gender":"Men","event":"50 m Freestyle","class":"S7","a":1200.0,"b":6.190278,"c":217.608,"ref1000Seconds":27.57},{"gender":"Men","event":"50 m Freestyle","class":"S8","a":1200.0,"b":6.190278,"c":207.301,"ref1000Seconds":26.26},{"gender":"Men","event":"50 m Freestyle","class":"S9","a":1200.0,"b":6.190278,"c":198.669,"ref1000Seconds":25.17},{"gender":"Men","event":"50 m Freestyle","class":"S10","a":1200.0,"b":6.190278,"c":188.441,"ref1000Seconds":23.87},{"gender":"Men","event":"50 m Freestyle","class":"S11","a":1200.0,"b":6.190278,"c":199.846,"ref1000Seconds":25.32},{"gender":"Men","event":"50 m Freestyle","class":"S12","a":1200.0,"b":6.190278,"c":183.932,"ref1000Seconds":23.3},{"gender":"Men","event":"50 m Freestyle","class":"S13","a":1200.0,"b":6.190278,"c":183.895,"ref1000Seconds":23.3},{"gender":"Women","event":"50 m Freestyle","class":"S1","a":1200.0,"b":5.542675,"c":496.208,"ref1000Seconds":68.49},{"gender":"Women","event":"50 m Freestyle","class":"S2","a":1200.0,"b":5.542675,"c":422.286,"ref1000Seconds":58.28},{"gender":"Women","event":"50 m Freestyle","class":"S3","a":1200.0,"b":5.542675,"c":340.569,"ref1000Seconds":47.0},{"gender":"Women","event":"50 m Freestyle","class":"S4","a":1200.0,"b":5.542675,"c":263.585,"ref1000Seconds":36.38},{"gender":"Women","event":"50 m Freestyle","class":"S5","a":1200.0,"b":5.542675,"c":260.748,"ref1000Seconds":35.99},{"gender":"Women","event":"50 m Freestyle","class":"S6","a":1200.0,"b":5.542675,"c":236.95,"ref1000Seconds":32.7},{"gender":"Women","event":"50 m Freestyle","class":"S7","a":1200.0,"b":5.542675,"c":229.74,"ref1000Seconds":31.71},{"gender":"Women","event":"50 m Freestyle","class":"S8","a":1200.0,"b":5.542675,"c":218.616,"ref1000Seconds":30.17},{"gender":"Women","event":"50 m Freestyle","class":"S9","a":1200.0,"b":5.542675,"c":206.819,"ref1000Seconds":28.54},{"gender":"Women","event":"50 m Freestyle","class":"S10","a":1200.0,"b":5.542675,"c":198.416,"ref1000Seconds":27.38},{"gender":"Women","event":"50 m Freestyle","class":"S11","a":1200.0,"b":5.542675,"c":207.528,"ref1000Seconds":28.64},{"gender":"Women","event":"50 m Freestyle","class":"S12","a":1200.0,"b":5.542675,"c":189.189,"ref1000Seconds":26.11},{"gender":"Women","event":"50 m Freestyle","class":"S13","a":1200.0,"b":5.542675,"c":191.273,"ref1000Seconds":26.4},{"gender":"Men","event":"100 m Freestyle","class":"S1","a":1200.0,"b":6.234464,"c":1092.007,"ref1000Seconds":137.59},{"gender":"Men","event":"100 m Freestyle","class":"S2","a":1200.0,"b":6.234464,"c":951.321,"ref1000Seconds":119.86},{"gender":"Men","event":"100 m Freestyle","class":"S3","a":1200.0,"b":6.234464,"c":743.315,"ref1000Seconds":93.65},{"gender":"Men","event":"100 m Freestyle","class":"S4","a":1200.0,"b":6.234464,"c":629.473,"ref1000Seconds":79.31},{"gender":"Men","event":"100 m Freestyle","class":"S5","a":1200.0,"b":6.234464,"c":540.915,"ref1000Seconds":68.15},{"gender":"Men","event":"100 m Freestyle","class":"S6","a":1200.0,"b":6.234464,"c":507.07,"ref1000Seconds":63.89},{"gender":"Men","event":"100 m Freestyle","class":"S7","a":1200.0,"b":6.234464,"c":480.627,"ref1000Seconds":60.55},{"gender":"Men","event":"100 m Freestyle","class":"S8","a":1200.0,"b":6.234464,"c":450.768,"ref1000Seconds":56.79},{"gender":"Men","event":"100 m Freestyle","class":"S9","a":1200.0,"b":6.234464,"c":433.183,"ref1000Seconds":54.58},{"gender":"Men","event":"100 m Freestyle","class":"S10","a":1200.0,"b":6.234464,"c":411.948,"ref1000Seconds":51.9},{"gender":"Men","event":"100 m Freestyle","class":"S11","a":1200.0,"b":6.234464,"c":445.317,"ref1000Seconds":56.11},{"gender":"Men","event":"100 m Freestyle","class":"S12","a":1200.0,"b":6.234464,"c":403.699,"ref1000Seconds":50.86},{"gender":"Men","event":"100 m Freestyle","class":"S13","a":1200.0,"b":6.234464,"c":401.287,"ref1000Seconds":50.56},{"gender":"Men","event":"100 m Freestyle","class":"S14","a":1200.0,"b":6.234464,"c":414.275,"ref1000Seconds":52.19},{"gender":"Women","event":"100 m Freestyle","class":"S1","a":1200.0,"b":5.631887,"c":1078.991,"ref1000Seconds":147.12},{"gender":"Women","event":"100 m Freestyle","class":"S2","a":1200.0,"b":5.631887,"c":907.483,"ref1000Seconds":123.73},{"gender":"Women","event":"100 m Freestyle","class":"S3","a":1200.0,"b":5.631887,"c":659.277,"ref1000Seconds":89.89},{"gender":"Women","event":"100 m Freestyle","class":"S4","a":1200.0,"b":5.631887,"c":588.663,"ref1000Seconds":80.26},{"gender":"Women","event":"100 m Freestyle","class":"S5","a":1200.0,"b":5.631887,"c":561.858,"ref1000Seconds":76.61},{"gender":"Women","event":"100 m Freestyle","class":"S6","a":1200.0,"b":5.631887,"c":524.537,"ref1000Seconds":71.52},{"gender":"Women","event":"100 m Freestyle","class":"S7","a":1200.0,"b":5.631887,"c":503.545,"ref1000Seconds":68.66},{"gender":"Women","event":"100 m Freestyle","class":"S8","a":1200.0,"b":5.631887,"c":479.97,"ref1000Seconds":65.44},{"gender":"Women","event":"100 m Freestyle","class":"S9","a":1200.0,"b":5.631887,"c":454.068,"ref1000Seconds":61.91},{"gender":"Women","event":"100 m Freestyle","class":"S10","a":1200.0,"b":5.631887,"c":432.476,"ref1000Seconds":58.96},{"gender":"Women","event":"100 m Freestyle","class":"S11","a":1200.0,"b":5.631887,"c":462.868,"ref1000Seconds":63.11},{"gender":"Women","event":"100 m Freestyle","class":"S12","a":1200.0,"b":5.631887,"c":413.816,"ref1000Seconds":56.42},{"gender":"Women","event":"100 m Freestyle","class":"S13","a":1200.0,"b":5.631887,"c":421.74,"ref1000Seconds":57.5},{"gender":"Women","event":"100 m Freestyle","class":"S14","a":1200.0,"b":5.631887,"c":428.045,"ref1000Seconds":58.36},{"gender":"Men","event":"200 m Freestyle","class":"S1","a":1200.0,"b":5.85741,"c":2069.044,"ref1000Seconds":273.7},{"gender":"Men","event":"200 m Freestyle","class":"S2","a":1200.0,"b":5.85741,"c":1792.375,"ref1000Seconds":237.1},{"gender":"Men","event":"200 m Freestyle","class":"S3","a":1200.0,"b":5.85741,"c":1442.311,"ref1000Seconds":190.79},{"gender":"Men","event":"200 m Freestyle","class":"S4","a":1200.0,"b":5.85741,"c":1202.718,"ref1000Seconds":159.1},{"gender":"Men","event":"200 m Freestyle","class":"S5","a":1200.0,"b":5.85741,"c":1121.535,"ref1000Seconds":148.36},{"gender":"Men","event":"200 m Freestyle","class":"S6","a":1200.0,"b":5.85741,"c":1090.875,"ref1000Seconds":144.3},{"gender":"Men","event":"200 m Freestyle","class":"S7","a":1200.0,"b":5.85741,"c":1009.476,"ref1000Seconds":133.53},{"gender":"Men","event":"200 m Freestyle","class":"S8","a":1200.0,"b":5.85741,"c":949.555,"ref1000Seconds":125.61},{"gender":"Men","event":"200 m Freestyle","class":"S9","a":1200.0,"b":5.85741,"c":904.288,"ref1000Seconds":119.62},{"gender":"Men","event":"200 m Freestyle","class":"S10","a":1200.0,"b":5.85741,"c":858.446,"ref1000Seconds":113.56},{"gender":"Men","event":"200 m Freestyle","class":"S11","a":1200.0,"b":5.85741,"c":958.315,"ref1000Seconds":126.77},{"gender":"Men","event":"200 m Freestyle","class":"S12","a":1200.0,"b":5.85741,"c":887.098,"ref1000Seconds":117.35},{"gender":"Men","event":"200 m Freestyle","class":"S13","a":1200.0,"b":5.85741,"c":848.808,"ref1000Seconds":112.28},{"gender":"Men","event":"200 m Freestyle","class":"S14","a":1200.0,"b":5.85741,"c":861.353,"ref1000Seconds":113.94},{"gender":"Women","event":"200 m Freestyle","class":"S1","a":1200.0,"b":5.542626,"c":2171.051,"ref1000Seconds":299.67},{"gender":"Women","event":"200 m Freestyle","class":"S2","a":1200.0,"b":5.542626,"c":1927.468,"ref1000Seconds":266.05},{"gender":"Women","event":"200 m Freestyle","class":"S3","a":1200.0,"b":5.542626,"c":1499.114,"ref1000Seconds":206.92},{"gender":"Women","event":"200 m Freestyle","class":"S4","a":1200.0,"b":5.542626,"c":1240.899,"ref1000Seconds":171.28},{"gender":"Women","event":"200 m Freestyle","class":"S5","a":1200.0,"b":5.542626,"c":1193.062,"ref1000Seconds":164.68},{"gender":"Women","event":"200 m Freestyle","class":"S6","a":1200.0,"b":5.542626,"c":1092.894,"ref1000Seconds":150.85},{"gender":"Women","event":"200 m Freestyle","class":"S7","a":1200.0,"b":5.542626,"c":1087.574,"ref1000Seconds":150.12},{"gender":"Women","event":"200 m Freestyle","class":"S8","a":1200.0,"b":5.542626,"c":1011.224,"ref1000Seconds":139.58},{"gender":"Women","event":"200 m Freestyle","class":"S9","a":1200.0,"b":5.542626,"c":986.083,"ref1000Seconds":136.11},{"gender":"Women","event":"200 m Freestyle","class":"S10","a":1200.0,"b":5.542626,"c":920.564,"ref1000Seconds":127.06},{"gender":"Women","event":"200 m Freestyle","class":"S11","a":1200.0,"b":5.542626,"c":1002.823,"ref1000Seconds":138.42},{"gender":"Women","event":"200 m Freestyle","class":"S12","a":1200.0,"b":5.542626,"c":896.543,"ref1000Seconds":123.75},{"gender":"Women","event":"200 m Freestyle","class":"S13","a":1200.0,"b":5.542626,"c":924.019,"ref1000Seconds":127.54},{"gender":"Women","event":"200 m Freestyle","class":"S14","a":1200.0,"b":5.542626,"c":916.839,"ref1000Seconds":126.55},{"gender":"Men","event":"400 m Freestyle","class":"S6","a":1200.0,"b":7.031938,"c":2590.464,"ref1000Seconds":296.59},{"gender":"Men","event":"400 m Freestyle","class":"S7","a":1200.0,"b":7.031938,"c":2411.27,"ref1000Seconds":276.08},{"gender":"Men","event":"400 m Freestyle","class":"S8","a":1200.0,"b":7.031938,"c":2267.765,"ref1000Seconds":259.65},{"gender":"Men","event":"400 m Freestyle","class":"S9","a":1200.0,"b":7.031938,"c":2177.563,"ref1000Seconds":249.32},{"gender":"Men","event":"400 m Freestyle","class":"S10","a":1200.0,"b":7.031938,"c":2091.67,"ref1000Seconds":239.48},{"gender":"Men","event":"400 m Freestyle","class":"S11","a":1200.0,"b":7.031938,"c":2323.011,"ref1000Seconds":265.97},{"gender":"Men","event":"400 m Freestyle","class":"S12","a":1200.0,"b":7.031938,"c":2106.32,"ref1000Seconds":241.16},{"gender":"Men","event":"400 m Freestyle","class":"S13","a":1200.0,"b":7.031938,"c":2069.191,"ref1000Seconds":236.91},{"gender":"Men","event":"400 m Freestyle","class":"S14","a":1200.0,"b":7.031938,"c":2177.614,"ref1000Seconds":249.32},{"gender":"Women","event":"400 m Freestyle","class":"S6","a":1200.0,"b":7.169493,"c":2771.897,"ref1000Seconds":312.45},{"gender":"Women","event":"400 m Freestyle","class":"S7","a":1200.0,"b":7.169493,"c":2702.351,"ref1000Seconds":304.61},{"gender":"Women","event":"400 m Freestyle","class":"S8","a":1200.0,"b":7.169493,"c":2550.903,"ref1000Seconds":287.53},{"gender":"Women","event":"400 m Freestyle","class":"S9","a":1200.0,"b":7.169493,"c":2467.682,"ref1000Seconds":278.15},{"gender":"Women","event":"400 m Freestyle","class":"S10","a":1200.0,"b":7.169493,"c":2369.03,"ref1000Seconds":267.03},{"gender":"Women","event":"400 m Freestyle","class":"S11","a":1200.0,"b":7.169493,"c":2587.852,"ref1000Seconds":291.7},{"gender":"Women","event":"400 m Freestyle","class":"S12","a":1200.0,"b":7.169493,"c":2341.779,"ref1000Seconds":263.96},{"gender":"Women","event":"400 m Freestyle","class":"S13","a":1200.0,"b":7.169493,"c":2311.852,"ref1000Seconds":260.59},{"gender":"Women","event":"400 m Freestyle","class":"S14","a":1200.0,"b":7.169493,"c":2388.088,"ref1000Seconds":269.18},{"gender":"Men","event":"800 m Freestyle","class":"S6","a":1200.0,"b":8.625102,"c":6298.916,"ref1000Seconds":609.94},{"gender":"Men","event":"800 m Freestyle","class":"S7","a":1200.0,"b":8.625102,"c":5985.628,"ref1000Seconds":579.6},{"gender":"Men","event":"800 m Freestyle","class":"S8","a":1200.0,"b":8.625102,"c":5407.854,"ref1000Seconds":523.65},{"gender":"Men","event":"800 m Freestyle","class":"S9","a":1200.0,"b":8.625102,"c":5296.689,"ref1000Seconds":512.89},{"gender":"Men","event":"800 m Freestyle","class":"S10","a":1200.0,"b":8.625102,"c":5237.697,"ref1000Seconds":507.18},{"gender":"Men","event":"800 m Freestyle","class":"S11","a":1200.0,"b":8.625102,"c":5703.957,"ref1000Seconds":552.32},{"gender":"Men","event":"800 m Freestyle","class":"S12","a":1200.0,"b":8.625102,"c":5650.812,"ref1000Seconds":547.18},{"gender":"Men","event":"800 m Freestyle","class":"S13","a":1200.0,"b":8.625102,"c":5287.937,"ref1000Seconds":512.04},{"gender":"Men","event":"800 m Freestyle","class":"S14","a":1200.0,"b":8.625102,"c":5243.527,"ref1000Seconds":507.74},{"gender":"Women","event":"800 m Freestyle","class":"S6","a":1200.0,"b":9.665276,"c":7099.219,"ref1000Seconds":624.53},{"gender":"Women","event":"800 m Freestyle","class":"S7","a":1200.0,"b":9.665276,"c":7198.259,"ref1000Seconds":633.24},{"gender":"Women","event":"800 m Freestyle","class":"S8","a":1200.0,"b":9.665276,"c":7010.584,"ref1000Seconds":616.73},{"gender":"Women","event":"800 m Freestyle","class":"S9","a":1200.0,"b":9.665276,"c":6394.379,"ref1000Seconds":562.52},{"gender":"Women","event":"800 m Freestyle","class":"S10","a":1200.0,"b":9.665276,"c":6333.273,"ref1000Seconds":557.15},{"gender":"Women","event":"800 m Freestyle","class":"S11","a":1200.0,"b":9.665276,"c":7144.465,"ref1000Seconds":628.51},{"gender":"Women","event":"800 m Freestyle","class":"S12","a":1200.0,"b":9.665276,"c":6240.516,"ref1000Seconds":548.99},{"gender":"Women","event":"800 m Freestyle","class":"S13","a":1200.0,"b":9.665276,"c":6228.878,"ref1000Seconds":547.96},{"gender":"Women","event":"800 m Freestyle","class":"S14","a":1200.0,"b":9.665276,"c":6360.058,"ref1000Seconds":559.5},{"gender":"Men","event":"1500 m Freestyle","class":"S6","a":1200.0,"b":8.333206,"c":12795.275,"ref1000Seconds":1275.04},{"gender":"Men","event":"1500 m Freestyle","class":"S7","a":1200.0,"b":8.333206,"c":10624.574,"ref1000Seconds":1058.73},{"gender":"Men","event":"1500 m Freestyle","class":"S8","a":1200.0,"b":8.333206,"c":10606.45,"ref1000Seconds":1056.92},{"gender":"Men","event":"1500 m Freestyle","class":"S9","a":1200.0,"b":8.333206,"c":10167.907,"ref1000Seconds":1013.22},{"gender":"Men","event":"1500 m Freestyle","class":"S10","a":1200.0,"b":8.333206,"c":9303.733,"ref1000Seconds":927.11},{"gender":"Men","event":"1500 m Freestyle","class":"S11","a":1200.0,"b":7.711087,"c":10750.668,"ref1000Seconds":1142.1},{"gender":"Men","event":"1500 m Freestyle","class":"S12","a":1200.0,"b":7.711087,"c":10703.508,"ref1000Seconds":1137.08},{"gender":"Men","event":"1500 m Freestyle","class":"S13","a":1200.0,"b":8.333206,"c":9888.268,"ref1000Seconds":985.35},{"gender":"Men","event":"1500 m Freestyle","class":"S14","a":1200.0,"b":8.333206,"c":9799.792,"ref1000Seconds":976.54},{"gender":"Women","event":"1500 m Freestyle","class":"S6","a":1200.0,"b":8.865509,"c":13376.893,"ref1000Seconds":1265.85},{"gender":"Women","event":"1500 m Freestyle","class":"S7","a":1200.0,"b":8.865509,"c":12469.245,"ref1000Seconds":1179.96},{"gender":"Women","event":"1500 m Freestyle","class":"S8","a":1200.0,"b":8.865509,"c":13033.074,"ref1000Seconds":1233.31},{"gender":"Women","event":"1500 m Freestyle","class":"S9","a":1200.0,"b":8.865509,"c":11682.991,"ref1000Seconds":1105.55},{"gender":"Women","event":"1500 m Freestyle","class":"S10","a":1200.0,"b":8.865509,"c":12140.278,"ref1000Seconds":1148.83},{"gender":"Women","event":"1500 m Freestyle","class":"S11","a":1200.0,"b":9.178323,"c":14117.415,"ref1000Seconds":1297.51},{"gender":"Women","event":"1500 m Freestyle","class":"S12","a":1200.0,"b":9.178323,"c":11395.489,"ref1000Seconds":1047.35},{"gender":"Women","event":"1500 m Freestyle","class":"S13","a":1200.0,"b":9.178323,"c":11626.695,"ref1000Seconds":1068.59},{"gender":"Women","event":"1500 m Freestyle","class":"S14","a":1200.0,"b":8.865509,"c":11369.031,"ref1000Seconds":1075.84},{"gender":"Men","event":"50 m Backstroke","class":"S1","a":1200.0,"b":4.42461,"c":392.523,"ref1000Seconds":64.06},{"gender":"Men","event":"50 m Backstroke","class":"S2","a":1200.0,"b":4.42461,"c":320.425,"ref1000Seconds":52.3},{"gender":"Men","event":"50 m Backstroke","class":"S3","a":1200.0,"b":4.42461,"c":274.991,"ref1000Seconds":44.88},{"gender":"Men","event":"50 m Backstroke","class":"S4","a":1200.0,"b":4.42461,"c":252.93,"ref1000Seconds":41.28},{"gender":"Men","event":"50 m Backstroke","class":"S5","a":1200.0,"b":4.42461,"c":215.364,"ref1000Seconds":35.15},{"gender":"Men","event":"50 m Backstroke","class":"S6","a":1200.0,"b":4.42461,"c":212.669,"ref1000Seconds":34.71},{"gender":"Men","event":"50 m Backstroke","class":"S7","a":1200.0,"b":4.42461,"c":201.668,"ref1000Seconds":32.91},{"gender":"Men","event":"50 m Backstroke","class":"S8","a":1200.0,"b":4.42461,"c":185.631,"ref1000Seconds":30.29},{"gender":"Men","event":"50 m Backstroke","class":"S9","a":1200.0,"b":4.42461,"c":178.78,"ref1000Seconds":29.18},{"gender":"Men","event":"50 m Backstroke","class":"S10","a":1200.0,"b":4.42461,"c":167.819,"ref1000Seconds":27.39},{"gender":"Men","event":"50 m Backstroke","class":"S11","a":1200.0,"b":4.42461,"c":184.764,"ref1000Seconds":30.15},{"gender":"Men","event":"50 m Backstroke","class":"S12","a":1200.0,"b":4.42461,"c":162.967,"ref1000Seconds":26.59},{"gender":"Men","event":"50 m Backstroke","class":"S13","a":1200.0,"b":4.42461,"c":158.718,"ref1000Seconds":25.9},{"gender":"Women","event":"50 m Backstroke","class":"S1","a":1200.0,"b":4.463099,"c":410.766,"ref1000Seconds":66.62},{"gender":"Women","event":"50 m Backstroke","class":"S2","a":1200.0,"b":4.463099,"c":355.767,"ref1000Seconds":57.7},{"gender":"Women","event":"50 m Backstroke","class":"S3","a":1200.0,"b":4.463099,"c":321.574,"ref1000Seconds":52.16},{"gender":"Women","event":"50 m Backstroke","class":"S4","a":1200.0,"b":4.463099,"c":283.615,"ref1000Seconds":46.0},{"gender":"Women","event":"50 m Backstroke","class":"S5","a":1200.0,"b":4.463099,"c":258.902,"ref1000Seconds":41.99},{"gender":"Women","event":"50 m Backstroke","class":"S6","a":1200.0,"b":4.463099,"c":236.191,"ref1000Seconds":38.31},{"gender":"Women","event":"50 m Backstroke","class":"S7","a":1200.0,"b":4.463099,"c":230.695,"ref1000Seconds":37.41},{"gender":"Women","event":"50 m Backstroke","class":"S8","a":1200.0,"b":4.463099,"c":221.162,"ref1000Seconds":35.87},{"gender":"Women","event":"50 m Backstroke","class":"S9","a":1200.0,"b":4.463099,"c":200.813,"ref1000Seconds":32.57},{"gender":"Women","event":"50 m Backstroke","class":"S10","a":1200.0,"b":4.463099,"c":192.112,"ref1000Seconds":31.16},{"gender":"Women","event":"50 m Backstroke","class":"S11","a":1200.0,"b":4.463099,"c":207.685,"ref1000Seconds":33.68},{"gender":"Women","event":"50 m Backstroke","class":"S12","a":1200.0,"b":4.463099,"c":192.303,"ref1000Seconds":31.19},{"gender":"Women","event":"50 m Backstroke","class":"S13","a":1200.0,"b":4.463099,"c":191.785,"ref1000Seconds":31.1},{"gender":"Men","event":"100 m Backstroke","class":"S1","a":1200.0,"b":6.150928,"c":1026.236,"ref1000Seconds":130.68},{"gender":"Men","event":"100 m Backstroke","class":"S2","a":1200.0,"b":6.150928,"c":851.864,"ref1000Seconds":108.47},{"gender":"Men","event":"100 m Backstroke","class":"S3","a":1200.0,"b":6.150928,"c":756.146,"ref1000Seconds":96.28},{"gender":"Men","event":"100 m Backstroke","class":"S4","a":1200.0,"b":6.150928,"c":724.049,"ref1000Seconds":92.2},{"gender":"Men","event":"100 m Backstroke","class":"S5","a":1200.0,"b":6.150928,"c":680.024,"ref1000Seconds":86.59},{"gender":"Men","event":"100 m Backstroke","class":"S6","a":1200.0,"b":6.150928,"c":572.561,"ref1000Seconds":72.91},{"gender":"Men","event":"100 m Backstroke","class":"S7","a":1200.0,"b":6.150928,"c":539.55,"ref1000Seconds":68.7},{"gender":"Men","event":"100 m Backstroke","class":"S8","a":1200.0,"b":6.150928,"c":512.529,"ref1000Seconds":65.26},{"gender":"Men","event":"100 m Backstroke","class":"S9","a":1200.0,"b":6.150928,"c":485.309,"ref1000Seconds":61.79},{"gender":"Men","event":"100 m Backstroke","class":"S10","a":1200.0,"b":6.150928,"c":464.394,"ref1000Seconds":59.13},{"gender":"Men","event":"100 m Backstroke","class":"S11","a":1200.0,"b":6.150928,"c":507.495,"ref1000Seconds":64.62},{"gender":"Men","event":"100 m Backstroke","class":"S12","a":1200.0,"b":6.150928,"c":445.475,"ref1000Seconds":56.72},{"gender":"Men","event":"100 m Backstroke","class":"S13","a":1200.0,"b":6.150928,"c":433.965,"ref1000Seconds":55.26},{"gender":"Men","event":"100 m Backstroke","class":"S14","a":1200.0,"b":6.150928,"c":467.708,"ref1000Seconds":59.55},{"gender":"Women","event":"100 m Backstroke","class":"S1","a":1200.0,"b":6.036088,"c":1115.683,"ref1000Seconds":144.18},{"gender":"Women","event":"100 m Backstroke","class":"S2","a":1200.0,"b":6.036088,"c":954.926,"ref1000Seconds":123.4},{"gender":"Women","event":"100 m Backstroke","class":"S3","a":1200.0,"b":6.036088,"c":939.112,"ref1000Seconds":121.36},{"gender":"Women","event":"100 m Backstroke","class":"S4","a":1200.0,"b":6.036088,"c":795.583,"ref1000Seconds":102.81},{"gender":"Women","event":"100 m Backstroke","class":"S5","a":1200.0,"b":6.036088,"c":717.105,"ref1000Seconds":92.67},{"gender":"Women","event":"100 m Backstroke","class":"S6","a":1200.0,"b":6.036088,"c":626.412,"ref1000Seconds":80.95},{"gender":"Women","event":"100 m Backstroke","class":"S7","a":1200.0,"b":6.036088,"c":614.665,"ref1000Seconds":79.43},{"gender":"Women","event":"100 m Backstroke","class":"S8","a":1200.0,"b":6.036088,"c":588.462,"ref1000Seconds":76.04},{"gender":"Women","event":"100 m Backstroke","class":"S9","a":1200.0,"b":6.036088,"c":547.186,"ref1000Seconds":70.71},{"gender":"Women","event":"100 m Backstroke","class":"S10","a":1200.0,"b":6.036088,"c":513.909,"ref1000Seconds":66.41},{"gender":"Women","event":"100 m Backstroke","class":"S11","a":1200.0,"b":6.036088,"c":570.938,"ref1000Seconds":73.78},{"gender":"Women","event":"100 m Backstroke","class":"S12","a":1200.0,"b":6.036088,"c":506.073,"ref1000Seconds":65.4},{"gender":"Women","event":"100 m Backstroke","class":"S13","a":1200.0,"b":6.036088,"c":497.353,"ref1000Seconds":64.27},{"gender":"Women","event":"100 m Backstroke","class":"S14","a":1200.0,"b":6.036088,"c":513.023,"ref1000Seconds":66.29},{"gender":"Men","event":"200 m Backstroke","class":"S6","a":1200.0,"b":7.819807,"c":1482.918,"ref1000Seconds":155.73},{"gender":"Men","event":"200 m Backstroke","class":"S7","a":1200.0,"b":7.819807,"c":1476.907,"ref1000Seconds":155.1},{"gender":"Men","event":"200 m Backstroke","class":"S8","a":1200.0,"b":7.819807,"c":1341.687,"ref1000Seconds":140.9},{"gender":"Men","event":"200 m Backstroke","class":"S9","a":1200.0,"b":7.819807,"c":1288.659,"ref1000Seconds":135.33},{"gender":"Men","event":"200 m Backstroke","class":"S10","a":1200.0,"b":7.819807,"c":1235.41,"ref1000Seconds":129.74},{"gender":"Men","event":"200 m Backstroke","class":"S11","a":1200.0,"b":7.819807,"c":1345.152,"ref1000Seconds":141.27},{"gender":"Men","event":"200 m Backstroke","class":"S12","a":1200.0,"b":7.819807,"c":1238.642,"ref1000Seconds":130.08},{"gender":"Men","event":"200 m Backstroke","class":"S13","a":1200.0,"b":7.819807,"c":1202.574,"ref1000Seconds":126.29},{"gender":"Men","event":"200 m Backstroke","class":"S14","a":1200.0,"b":7.819807,"c":1249.638,"ref1000Seconds":131.23},{"gender":"Women","event":"200 m Backstroke","class":"S6","a":1200.0,"b":7.752011,"c":1538.568,"ref1000Seconds":162.74},{"gender":"Women","event":"200 m Backstroke","class":"S7","a":1200.0,"b":7.752011,"c":1528.877,"ref1000Seconds":161.71},{"gender":"Women","event":"200 m Backstroke","class":"S8","a":1200.0,"b":7.752011,"c":1561.298,"ref1000Seconds":165.14},{"gender":"Women","event":"200 m Backstroke","class":"S9","a":1200.0,"b":7.752011,"c":1426.67,"ref1000Seconds":150.9},{"gender":"Women","event":"200 m Backstroke","class":"S10","a":1200.0,"b":7.752011,"c":1389.981,"ref1000Seconds":147.02},{"gender":"Women","event":"200 m Backstroke","class":"S11","a":1200.0,"b":7.752011,"c":1590.684,"ref1000Seconds":168.25},{"gender":"Women","event":"200 m Backstroke","class":"S12","a":1200.0,"b":7.752011,"c":1352.762,"ref1000Seconds":143.08},{"gender":"Women","event":"200 m Backstroke","class":"S13","a":1200.0,"b":7.752011,"c":1382.808,"ref1000Seconds":146.26},{"gender":"Women","event":"200 m Backstroke","class":"S14","a":1200.0,"b":7.752011,"c":1392.071,"ref1000Seconds":147.24},{"gender":"Men","event":"50 m Breaststroke","class":"SB1","a":1200.0,"b":4.932103,"c":528.263,"ref1000Seconds":79.62},{"gender":"Men","event":"50 m Breaststroke","class":"SB2","a":1200.0,"b":4.932103,"c":333.076,"ref1000Seconds":50.2},{"gender":"Men","event":"50 m Breaststroke","class":"SB3","a":1200.0,"b":4.932103,"c":299.467,"ref1000Seconds":45.14},{"gender":"Men","event":"50 m Breaststroke","class":"SB4","a":1200.0,"b":4.932103,"c":271.204,"ref1000Seconds":40.88},{"gender":"Men","event":"50 m Breaststroke","class":"SB5","a":1200.0,"b":4.932103,"c":268.343,"ref1000Seconds":40.44},{"gender":"Men","event":"50 m Breaststroke","class":"SB6","a":1200.0,"b":4.932103,"c":232.309,"ref1000Seconds":35.01},{"gender":"Men","event":"50 m Breaststroke","class":"SB7","a":1200.0,"b":4.932103,"c":227.424,"ref1000Seconds":34.28},{"gender":"Men","event":"50 m Breaststroke","class":"SB8","a":1200.0,"b":4.932103,"c":205.596,"ref1000Seconds":30.99},{"gender":"Men","event":"50 m Breaststroke","class":"SB9","a":1200.0,"b":4.932103,"c":200.355,"ref1000Seconds":30.2},{"gender":"Men","event":"50 m Breaststroke","class":"SB11","a":1200.0,"b":4.932103,"c":213.244,"ref1000Seconds":32.14},{"gender":"Men","event":"50 m Breaststroke","class":"SB12","a":1200.0,"b":4.932103,"c":195.17,"ref1000Seconds":29.41},{"gender":"Men","event":"50 m Breaststroke","class":"SB13","a":1200.0,"b":4.932103,"c":191.094,"ref1000Seconds":28.8},{"gender":"Women","event":"50 m Breaststroke","class":"SB1","a":1200.0,"b":4.557367,"c":512.963,"ref1000Seconds":81.95},{"gender":"Women","event":"50 m Breaststroke","class":"SB2","a":1200.0,"b":4.557367,"c":404.928,"ref1000Seconds":64.69},{"gender":"Women","event":"50 m Breaststroke","class":"SB3","a":1200.0,"b":4.557367,"c":330.784,"ref1000Seconds":52.84},{"gender":"Women","event":"50 m Breaststroke","class":"SB4","a":1200.0,"b":4.557367,"c":291.412,"ref1000Seconds":46.55},{"gender":"Women","event":"50 m Breaststroke","class":"SB5","a":1200.0,"b":4.557367,"c":272.282,"ref1000Seconds":43.5},{"gender":"Women","event":"50 m Breaststroke","class":"SB6","a":1200.0,"b":4.557367,"c":262.784,"ref1000Seconds":41.98},{"gender":"Women","event":"50 m Breaststroke","class":"SB7","a":1200.0,"b":4.557367,"c":258.801,"ref1000Seconds":41.34},{"gender":"Women","event":"50 m Breaststroke","class":"SB8","a":1200.0,"b":4.557367,"c":227.868,"ref1000Seconds":36.4},{"gender":"Women","event":"50 m Breaststroke","class":"SB9","a":1200.0,"b":4.557367,"c":213.307,"ref1000Seconds":34.07},{"gender":"Women","event":"50 m Breaststroke","class":"SB11","a":1200.0,"b":4.557367,"c":229.633,"ref1000Seconds":36.68},{"gender":"Women","event":"50 m Breaststroke","class":"SB12","a":1200.0,"b":4.557367,"c":210.683,"ref1000Seconds":33.65},{"gender":"Women","event":"50 m Breaststroke","class":"SB13","a":1200.0,"b":4.557367,"c":219.939,"ref1000Seconds":35.13},{"gender":"Men","event":"100 m Breaststroke","class":"SB1","a":1200.0,"b":5.160068,"c":1149.221,"ref1000Seconds":167.47},{"gender":"Men","event":"100 m Breaststroke","class":"SB2","a":1200.0,"b":5.160068,"c":872.826,"ref1000Seconds":127.19},{"gender":"Men","event":"100 m Breaststroke","class":"SB3","a":1200.0,"b":5.160068,"c":743.745,"ref1000Seconds":108.38},{"gender":"Men","event":"100 m Breaststroke","class":"SB4","a":1200.0,"b":5.160068,"c":624.806,"ref1000Seconds":91.05},{"gender":"Men","event":"100 m Breaststroke","class":"SB5","a":1200.0,"b":5.160068,"c":608.269,"ref1000Seconds":88.64},{"gender":"Men","event":"100 m Breaststroke","class":"SB6","a":1200.0,"b":5.160068,"c":532.269,"ref1000Seconds":77.56},{"gender":"Men","event":"100 m Breaststroke","class":"SB7","a":1200.0,"b":5.160068,"c":522.243,"ref1000Seconds":76.1},{"gender":"Men","event":"100 m Breaststroke","class":"SB8","a":1200.0,"b":5.160068,"c":474.471,"ref1000Seconds":69.14},{"gender":"Men","event":"100 m Breaststroke","class":"SB9","a":1200.0,"b":5.160068,"c":450.872,"ref1000Seconds":65.7},{"gender":"Men","event":"100 m Breaststroke","class":"SB11","a":1200.0,"b":5.160068,"c":495.119,"ref1000Seconds":72.15},{"gender":"Men","event":"100 m Breaststroke","class":"SB12","a":1200.0,"b":5.160068,"c":442.905,"ref1000Seconds":64.54},{"gender":"Men","event":"100 m Breaststroke","class":"SB13","a":1200.0,"b":5.160068,"c":432.01,"ref1000Seconds":62.95},{"gender":"Men","event":"100 m Breaststroke","class":"SB14","a":1200.0,"b":5.160068,"c":450.034,"ref1000Seconds":65.58},{"gender":"Women","event":"100 m Breaststroke","class":"SB1","a":1200.0,"b":5.094752,"c":1357.988,"ref1000Seconds":199.8},{"gender":"Women","event":"100 m Breaststroke","class":"SB2","a":1200.0,"b":5.069247,"c":1097.815,"ref1000Seconds":162.12},{"gender":"Women","event":"100 m Breaststroke","class":"SB3","a":1200.0,"b":5.069247,"c":879.038,"ref1000Seconds":129.81},{"gender":"Women","event":"100 m Breaststroke","class":"SB4","a":1200.0,"b":5.069247,"c":701.665,"ref1000Seconds":103.62},{"gender":"Women","event":"100 m Breaststroke","class":"SB5","a":1200.0,"b":5.069247,"c":665.005,"ref1000Seconds":98.21},{"gender":"Women","event":"100 m Breaststroke","class":"SB6","a":1200.0,"b":5.069247,"c":622.914,"ref1000Seconds":91.99},{"gender":"Women","event":"100 m Breaststroke","class":"SB7","a":1200.0,"b":5.069247,"c":600.024,"ref1000Seconds":88.61},{"gender":"Women","event":"100 m Breaststroke","class":"SB8","a":1200.0,"b":5.069247,"c":535.607,"ref1000Seconds":79.1},{"gender":"Women","event":"100 m Breaststroke","class":"SB9","a":1200.0,"b":5.069247,"c":519.558,"ref1000Seconds":76.73},{"gender":"Women","event":"100 m Breaststroke","class":"SB11","a":1200.0,"b":5.069247,"c":550.98,"ref1000Seconds":81.37},{"gender":"Women","event":"100 m Breaststroke","class":"SB12","a":1200.0,"b":5.069247,"c":499.493,"ref1000Seconds":73.76},{"gender":"Women","event":"100 m Breaststroke","class":"SB13","a":1200.0,"b":5.069247,"c":501.85,"ref1000Seconds":74.11},{"gender":"Women","event":"100 m Breaststroke","class":"SB14","a":1200.0,"b":5.069247,"c":511.674,"ref1000Seconds":75.56},{"gender":"Men","event":"200 m Breaststroke","class":"SB4","a":1200.0,"b":8.141971,"c":1947.233,"ref1000Seconds":197.81},{"gender":"Men","event":"200 m Breaststroke","class":"SB5","a":1200.0,"b":8.141971,"c":1908.756,"ref1000Seconds":193.9},{"gender":"Men","event":"200 m Breaststroke","class":"SB6","a":1200.0,"b":8.141971,"c":1691.169,"ref1000Seconds":171.79},{"gender":"Men","event":"200 m Breaststroke","class":"SB7","a":1200.0,"b":8.141971,"c":1631.629,"ref1000Seconds":165.74},{"gender":"Men","event":"200 m Breaststroke","class":"SB8","a":1200.0,"b":8.141971,"c":1447.102,"ref1000Seconds":147.0},{"gender":"Men","event":"200 m Breaststroke","class":"SB9","a":1200.0,"b":8.141971,"c":1519.554,"ref1000Seconds":154.36},{"gender":"Men","event":"200 m Breaststroke","class":"SB11","a":1200.0,"b":8.141971,"c":1641.054,"ref1000Seconds":166.7},{"gender":"Men","event":"200 m Breaststroke","class":"SB12","a":1200.0,"b":8.141971,"c":1504.671,"ref1000Seconds":152.85},{"gender":"Men","event":"200 m Breaststroke","class":"SB13","a":1200.0,"b":8.141971,"c":1372.648,"ref1000Seconds":139.44},{"gender":"Men","event":"200 m Breaststroke","class":"SB14","a":1200.0,"b":8.141971,"c":1410.562,"ref1000Seconds":143.29},{"gender":"Women","event":"200 m Breaststroke","class":"SB4","a":1200.0,"b":8.185088,"c":2080.958,"ref1000Seconds":210.47},{"gender":"Women","event":"200 m Breaststroke","class":"SB5","a":1200.0,"b":8.185088,"c":2108.211,"ref1000Seconds":213.22},{"gender":"Women","event":"200 m Breaststroke","class":"SB6","a":1200.0,"b":8.185088,"c":1969.968,"ref1000Seconds":199.24},{"gender":"Women","event":"200 m Breaststroke","class":"SB7","a":1200.0,"b":8.185088,"c":1839.838,"ref1000Seconds":186.08},{"gender":"Women","event":"200 m Breaststroke","class":"SB8","a":1200.0,"b":8.185088,"c":1722.567,"ref1000Seconds":174.22},{"gender":"Women","event":"200 m Breaststroke","class":"SB9","a":1200.0,"b":8.185088,"c":1635.193,"ref1000Seconds":165.38},{"gender":"Women","event":"200 m Breaststroke","class":"SB11","a":1200.0,"b":8.185088,"c":1847.551,"ref1000Seconds":186.86},{"gender":"Women","event":"200 m Breaststroke","class":"SB12","a":1200.0,"b":8.185088,"c":1593.01,"ref1000Seconds":161.12},{"gender":"Women","event":"200 m Breaststroke","class":"SB13","a":1200.0,"b":8.185088,"c":1586.37,"ref1000Seconds":160.44},{"gender":"Women","event":"200 m Breaststroke","class":"SB14","a":1200.0,"b":8.185088,"c":1658.849,"ref1000Seconds":167.77},{"gender":"Men","event":"50 m Butterfly","class":"S1","a":1200.0,"b":5.052771,"c":797.939,"ref1000Seconds":118.12},{"gender":"Men","event":"50 m Butterfly","class":"S2","a":1200.0,"b":5.033853,"c":345.137,"ref1000Seconds":51.23},{"gender":"Men","event":"50 m Butterfly","class":"S3","a":1200.0,"b":5.033853,"c":321.168,"ref1000Seconds":47.68},{"gender":"Men","event":"50 m Butterfly","class":"S4","a":1200.0,"b":5.033853,"c":257.846,"ref1000Seconds":38.27},{"gender":"Men","event":"50 m Butterfly","class":"S5","a":1200.0,"b":5.033853,"c":218.503,"ref1000Seconds":32.43},{"gender":"Men","event":"50 m Butterfly","class":"S6","a":1200.0,"b":5.033853,"c":202.206,"ref1000Seconds":30.01},{"gender":"Men","event":"50 m Butterfly","class":"S7","a":1200.0,"b":5.033853,"c":197.154,"ref1000Seconds":29.26},{"gender":"Men","event":"50 m Butterfly","class":"S8","a":1200.0,"b":5.033853,"c":184.239,"ref1000Seconds":27.35},{"gender":"Men","event":"50 m Butterfly","class":"S9","a":1200.0,"b":5.033853,"c":177.747,"ref1000Seconds":26.38},{"gender":"Men","event":"50 m Butterfly","class":"S10","a":1200.0,"b":5.033853,"c":169.989,"ref1000Seconds":25.23},{"gender":"Men","event":"50 m Butterfly","class":"S11","a":1200.0,"b":5.033853,"c":174.456,"ref1000Seconds":25.89},{"gender":"Men","event":"50 m Butterfly","class":"S12","a":1200.0,"b":5.033853,"c":166.225,"ref1000Seconds":24.67},{"gender":"Men","event":"50 m Butterfly","class":"S13","a":1200.0,"b":5.033853,"c":170.629,"ref1000Seconds":25.33},{"gender":"Women","event":"50 m Butterfly","class":"S1","a":1200.0,"b":4.487057,"c":484.682,"ref1000Seconds":78.31},{"gender":"Women","event":"50 m Butterfly","class":"S2","a":1200.0,"b":4.487057,"c":367.192,"ref1000Seconds":59.32},{"gender":"Women","event":"50 m Butterfly","class":"S3","a":1200.0,"b":4.487057,"c":332.484,"ref1000Seconds":53.72},{"gender":"Women","event":"50 m Butterfly","class":"S4","a":1200.0,"b":4.487057,"c":259.361,"ref1000Seconds":41.9},{"gender":"Women","event":"50 m Butterfly","class":"S5","a":1200.0,"b":4.487057,"c":252.759,"ref1000Seconds":40.83},{"gender":"Women","event":"50 m Butterfly","class":"S6","a":1200.0,"b":4.487057,"c":209.303,"ref1000Seconds":33.81},{"gender":"Women","event":"50 m Butterfly","class":"S7","a":1200.0,"b":4.487057,"c":203.172,"ref1000Seconds":32.82},{"gender":"Women","event":"50 m Butterfly","class":"S8","a":1200.0,"b":4.487057,"c":197.546,"ref1000Seconds":31.91},{"gender":"Women","event":"50 m Butterfly","class":"S9","a":1200.0,"b":4.487057,"c":182.435,"ref1000Seconds":29.47},{"gender":"Women","event":"50 m Butterfly","class":"S10","a":1200.0,"b":4.487057,"c":178.36,"ref1000Seconds":28.81},{"gender":"Women","event":"50 m Butterfly","class":"S11","a":1200.0,"b":4.487057,"c":198.452,"ref1000Seconds":32.06},{"gender":"Women","event":"50 m Butterfly","class":"S12","a":1200.0,"b":4.487057,"c":173.587,"ref1000Seconds":28.04},{"gender":"Women","event":"50 m Butterfly","class":"S13","a":1200.0,"b":4.487057,"c":177.685,"ref1000Seconds":28.7},{"gender":"Men","event":"100 m Butterfly","class":"S5","a":1200.0,"b":7.040091,"c":613.331,"ref1000Seconds":70.15},{"gender":"Men","event":"100 m Butterfly","class":"S6","a":1200.0,"b":7.040091,"c":592.0,"ref1000Seconds":67.71},{"gender":"Men","event":"100 m Butterfly","class":"S7","a":1200.0,"b":7.040091,"c":600.417,"ref1000Seconds":68.68},{"gender":"Men","event":"100 m Butterfly","class":"S8","a":1200.0,"b":7.040091,"c":513.704,"ref1000Seconds":58.76},{"gender":"Men","event":"100 m Butterfly","class":"S9","a":1200.0,"b":7.040091,"c":504.674,"ref1000Seconds":57.72},{"gender":"Men","event":"100 m Butterfly","class":"S10","a":1200.0,"b":7.040091,"c":482.455,"ref1000Seconds":55.18},{"gender":"Men","event":"100 m Butterfly","class":"S11","a":1200.0,"b":7.040091,"c":513.615,"ref1000Seconds":58.75},{"gender":"Men","event":"100 m Butterfly","class":"S12","a":1200.0,"b":7.040091,"c":469.979,"ref1000Seconds":53.76},{"gender":"Men","event":"100 m Butterfly","class":"S13","a":1200.0,"b":7.040091,"c":469.473,"ref1000Seconds":53.7},{"gender":"Men","event":"100 m Butterfly","class":"S14","a":1200.0,"b":7.040091,"c":486.044,"ref1000Seconds":55.59},{"gender":"Women","event":"100 m Butterfly","class":"S5","a":1200.0,"b":5.992308,"c":846.834,"ref1000Seconds":110.06},{"gender":"Women","event":"100 m Butterfly","class":"S6","a":1200.0,"b":5.992308,"c":616.429,"ref1000Seconds":80.11},{"gender":"Women","event":"100 m Butterfly","class":"S7","a":1200.0,"b":5.992308,"c":587.099,"ref1000Seconds":76.3},{"gender":"Women","event":"100 m Butterfly","class":"S8","a":1200.0,"b":5.992308,"c":519.659,"ref1000Seconds":67.53},{"gender":"Women","event":"100 m Butterfly","class":"S9","a":1200.0,"b":5.992308,"c":500.899,"ref1000Seconds":65.1},{"gender":"Women","event":"100 m Butterfly","class":"S10","a":1200.0,"b":5.992308,"c":483.135,"ref1000Seconds":62.79},{"gender":"Women","event":"100 m Butterfly","class":"S11","a":1200.0,"b":5.992308,"c":559.839,"ref1000Seconds":72.76},{"gender":"Women","event":"100 m Butterfly","class":"S12","a":1200.0,"b":5.992308,"c":473.486,"ref1000Seconds":61.53},{"gender":"Women","event":"100 m Butterfly","class":"S13","a":1200.0,"b":5.992308,"c":466.156,"ref1000Seconds":60.58},{"gender":"Women","event":"100 m Butterfly","class":"S14","a":1200.0,"b":5.992308,"c":495.23,"ref1000Seconds":64.36},{"gender":"Men","event":"200 m Butterfly","class":"S8","a":1200.0,"b":9.504863,"c":1513.063,"ref1000Seconds":135.01},{"gender":"Men","event":"200 m Butterfly","class":"S9","a":1200.0,"b":9.504863,"c":1442.571,"ref1000Seconds":128.72},{"gender":"Men","event":"200 m Butterfly","class":"S10","a":1200.0,"b":9.504863,"c":1393.794,"ref1000Seconds":124.36},{"gender":"Men","event":"200 m Butterfly","class":"S11","a":1200.0,"b":9.504863,"c":1553.096,"ref1000Seconds":138.58},{"gender":"Men","event":"200 m Butterfly","class":"S12","a":1200.0,"b":9.504863,"c":1400.883,"ref1000Seconds":125.0},{"gender":"Men","event":"200 m Butterfly","class":"S13","a":1200.0,"b":9.504863,"c":1280.633,"ref1000Seconds":114.27},{"gender":"Men","event":"200 m Butterfly","class":"S14","a":1200.0,"b":9.504863,"c":1418.816,"ref1000Seconds":126.6},{"gender":"Women","event":"200 m Butterfly","class":"S8","a":1200.0,"b":10.211003,"c":1932.78,"ref1000Seconds":162.24},{"gender":"Women","event":"200 m Butterfly","class":"S9","a":1200.0,"b":10.211003,"c":1796.133,"ref1000Seconds":150.77},{"gender":"Women","event":"200 m Butterfly","class":"S10","a":1200.0,"b":10.211003,"c":1682.435,"ref1000Seconds":141.22},{"gender":"Women","event":"200 m Butterfly","class":"S11","a":1200.0,"b":9.823312,"c":1969.903,"ref1000Seconds":170.91},{"gender":"Women","event":"200 m Butterfly","class":"S12","a":1200.0,"b":9.823312,"c":1727.066,"ref1000Seconds":149.85},{"gender":"Women","event":"200 m Butterfly","class":"S13","a":1200.0,"b":10.211003,"c":1630.353,"ref1000Seconds":136.85},{"gender":"Women","event":"200 m Butterfly","class":"S14","a":1200.0,"b":10.211003,"c":1799.267,"ref1000Seconds":151.03},{"gender":"Men","event":"150 m Individual Medley","class":"SM1","a":1200.0,"b":4.953288,"c":1817.538,"ref1000Seconds":273.09},{"gender":"Men","event":"150 m Individual Medley","class":"SM2","a":1200.0,"b":4.953288,"c":1396.204,"ref1000Seconds":209.78},{"gender":"Men","event":"150 m Individual Medley","class":"SM3","a":1200.0,"b":4.953288,"c":1113.698,"ref1000Seconds":167.34},{"gender":"Men","event":"150 m Individual Medley","class":"SM4","a":1200.0,"b":4.953288,"c":955.697,"ref1000Seconds":143.6},{"gender":"Women","event":"150 m Individual Medley","class":"SM1","a":1200.0,"b":4.044227,"c":1297.667,"ref1000Seconds":225.83},{"gender":"Women","event":"150 m Individual Medley","class":"SM2","a":1200.0,"b":3.983352,"c":1595.997,"ref1000Seconds":280.72},{"gender":"Women","event":"150 m Individual Medley","class":"SM3","a":1200.0,"b":3.983352,"c":990.338,"ref1000Seconds":174.19},{"gender":"Women","event":"150 m Individual Medley","class":"SM4","a":1200.0,"b":3.983352,"c":913.176,"ref1000Seconds":160.61},{"gender":"Men","event":"200 m Individual Medley","class":"SM3","a":1200.0,"b":7.155608,"c":2170.953,"ref1000Seconds":245.09},{"gender":"Men","event":"200 m Individual Medley","class":"SM4","a":1200.0,"b":7.155608,"c":1687.596,"ref1000Seconds":190.52},{"gender":"Men","event":"200 m Individual Medley","class":"SM5","a":1200.0,"b":7.155608,"c":1537.839,"ref1000Seconds":173.61},{"gender":"Men","event":"200 m Individual Medley","class":"SM6","a":1200.0,"b":7.155608,"c":1401.665,"ref1000Seconds":158.24},{"gender":"Men","event":"200 m Individual Medley","class":"SM7","a":1200.0,"b":7.155608,"c":1328.357,"ref1000Seconds":149.96},{"gender":"Men","event":"200 m Individual Medley","class":"SM8","a":1200.0,"b":7.155608,"c":1244.202,"ref1000Seconds":140.46},{"gender":"Men","event":"200 m Individual Medley","class":"SM9","a":1200.0,"b":7.155608,"c":1191.146,"ref1000Seconds":134.47},{"gender":"Men","event":"200 m Individual Medley","class":"SM10","a":1200.0,"b":7.155608,"c":1142.132,"ref1000Seconds":128.94},{"gender":"Men","event":"200 m Individual Medley","class":"SM11","a":1200.0,"b":7.155608,"c":1236.267,"ref1000Seconds":139.57},{"gender":"Men","event":"200 m Individual Medley","class":"SM12","a":1200.0,"b":7.155608,"c":1121.927,"ref1000Seconds":126.66},{"gender":"Men","event":"200 m Individual Medley","class":"SM13","a":1200.0,"b":7.155608,"c":1111.544,"ref1000Seconds":125.49},{"gender":"Men","event":"200 m Individual Medley","class":"SM14","a":1200.0,"b":7.155608,"c":1145.918,"ref1000Seconds":129.37},{"gender":"Women","event":"200 m Individual Medley","class":"SM3","a":1200.0,"b":6.917578,"c":5141.396,"ref1000Seconds":596.48},{"gender":"Women","event":"200 m Individual Medley","class":"SM4","a":1200.0,"b":6.904309,"c":1912.781,"ref1000Seconds":222.25},{"gender":"Women","event":"200 m Individual Medley","class":"SM5","a":1200.0,"b":6.904309,"c":1699.945,"ref1000Seconds":197.52},{"gender":"Women","event":"200 m Individual Medley","class":"SM6","a":1200.0,"b":6.904309,"c":1506.044,"ref1000Seconds":174.99},{"gender":"Women","event":"200 m Individual Medley","class":"SM7","a":1200.0,"b":6.904309,"c":1478.245,"ref1000Seconds":171.76},{"gender":"Women","event":"200 m Individual Medley","class":"SM8","a":1200.0,"b":6.904309,"c":1374.663,"ref1000Seconds":159.72},{"gender":"Women","event":"200 m Individual Medley","class":"SM9","a":1200.0,"b":6.904309,"c":1308.739,"ref1000Seconds":152.06},{"gender":"Women","event":"200 m Individual Medley","class":"SM10","a":1200.0,"b":6.904309,"c":1242.786,"ref1000Seconds":144.4},{"gender":"Women","event":"200 m Individual Medley","class":"SM11","a":1200.0,"b":6.904309,"c":1371.045,"ref1000Seconds":159.3},{"gender":"Women","event":"200 m Individual Medley","class":"SM12","a":1200.0,"b":6.904309,"c":1245.697,"ref1000Seconds":144.74},{"gender":"Women","event":"200 m Individual Medley","class":"SM13","a":1200.0,"b":6.904309,"c":1225.471,"ref1000Seconds":142.39},{"gender":"Women","event":"200 m Individual Medley","class":"SM14","a":1200.0,"b":6.904309,"c":1246.273,"ref1000Seconds":144.8},{"gender":"Men","event":"400 m Individual Medley","class":"SM8","a":1200.0,"b":9.693428,"c":3377.791,"ref1000Seconds":296.41},{"gender":"Men","event":"400 m Individual Medley","class":"SM9","a":1200.0,"b":9.693428,"c":3273.121,"ref1000Seconds":287.23},{"gender":"Men","event":"400 m Individual Medley","class":"SM10","a":1200.0,"b":9.693428,"c":3243.196,"ref1000Seconds":284.6},{"gender":"Men","event":"400 m Individual Medley","class":"SM11","a":1200.0,"b":9.693428,"c":3622.956,"ref1000Seconds":317.93},{"gender":"Men","event":"400 m Individual Medley","class":"SM12","a":1200.0,"b":9.693428,"c":3192.83,"ref1000Seconds":280.18},{"gender":"Men","event":"400 m Individual Medley","class":"SM13","a":1200.0,"b":9.693428,"c":3219.15,"ref1000Seconds":282.49},{"gender":"Men","event":"400 m Individual Medley","class":"SM14","a":1200.0,"b":9.693428,"c":3194.461,"ref1000Seconds":280.32},{"gender":"Women","event":"400 m Individual Medley","class":"SM8","a":1200.0,"b":8.825412,"c":3796.63,"ref1000Seconds":360.64},{"gender":"Women","event":"400 m Individual Medley","class":"SM9","a":1200.0,"b":8.825412,"c":3406.953,"ref1000Seconds":323.62},{"gender":"Women","event":"400 m Individual Medley","class":"SM10","a":1200.0,"b":8.825412,"c":3195.505,"ref1000Seconds":303.54},{"gender":"Women","event":"400 m Individual Medley","class":"SM11","a":1200.0,"b":8.825412,"c":3772.243,"ref1000Seconds":358.32},{"gender":"Women","event":"400 m Individual Medley","class":"SM12","a":1200.0,"b":8.825412,"c":3531.69,"ref1000Seconds":335.47},{"gender":"Women","event":"400 m Individual Medley","class":"SM13","a":1200.0,"b":8.825412,"c":3253.386,"ref1000Seconds":309.03},{"gender":"Women","event":"400 m Individual Medley","class":"SM14","a":1200.0,"b":8.825412,"c":3263.177,"ref1000Seconds":309.97}];
+const TABS=[['dashboard','Dashboard'],['live','Ranking en vivo'],['import','Importar'],['rankings','Rankings'],['athletes','Atletas'],['compare','Comparador'],['projection','Proyección'],['points','Puntos WPS'],['records','Records'],['reports','Informes'],['params','Parámetros']];
+let marks=JSON.parse(localStorage.getItem('wpsLabMarks')||'[]').map(m=>({...m,class:validSportClass(m.class)?m.class:''}));
+let records=JSON.parse(localStorage.getItem('wpsLabRecords')||'[]');
+let currentAthlete=null;
+const $=id=>document.getElementById(id), uniq=a=>[...new Set(a.filter(Boolean))], norm=s=>String(s??'').trim(), low=s=>norm(s).toLowerCase();
+
+const NPC_ALIASES={
+  'SPAIN':'ESP','ESPAÑA':'ESP','ESPANA':'ESP','ESP':'ESP','FRANCE':'FRA','FRA':'FRA','GREAT BRITAIN':'GBR','UNITED KINGDOM':'GBR','BRITAIN':'GBR','GBR':'GBR','ENGLAND':'GBR','ITALY':'ITA','ITALIA':'ITA','ITA':'ITA','GERMANY':'GER','DEUTSCHLAND':'GER','GER':'GER','NETHERLANDS':'NED','HOLLAND':'NED','NED':'NED','PORTUGAL':'POR','POR':'POR','BRAZIL':'BRA','BRASIL':'BRA','BRA':'BRA','ARGENTINA':'ARG','ARG':'ARG','CHILE':'CHI','CHI':'CHI','MEXICO':'MEX','MÉXICO':'MEX','MEX':'MEX','COLOMBIA':'COL','COL':'COL','PERU':'PER','PERÚ':'PER','PER':'PER','UNITED STATES':'USA','USA':'USA','UNITED STATES OF AMERICA':'USA','U.S.A.':'USA','CANADA':'CAN','CAN':'CAN','AUSTRALIA':'AUS','AUS':'AUS','NEW ZEALAND':'NZL','NZL':'NZL','JAPAN':'JPN','JPN':'JPN','CHINA':'CHN','CHN':'CHN','KOREA':'KOR','REPUBLIC OF KOREA':'KOR','SOUTH KOREA':'KOR','KOR':'KOR','UKRAINE':'UKR','UKR':'UKR','POLAND':'POL','POL':'POL','GREECE':'GRE','HELLAS':'GRE','GRE':'GRE','TURKEY':'TUR','TÜRKIYE':'TUR','TURKIYE':'TUR','TUR':'TUR','IRELAND':'IRL','IRL':'IRL','SWEDEN':'SWE','SWE':'SWE','NORWAY':'NOR','NOR':'NOR','DENMARK':'DEN','DEN':'DEN','FINLAND':'FIN','FIN':'FIN','BELGIUM':'BEL','BEL':'BEL','AUSTRIA':'AUT','AUT':'AUT','SWITZERLAND':'SUI','SUI':'SUI','CZECH REPUBLIC':'CZE','CZECHIA':'CZE','CZE':'CZE','SLOVAKIA':'SVK','SVK':'SVK','HUNGARY':'HUN','HUN':'HUN','CROATIA':'CRO','HRVATSKA':'CRO','CRO':'CRO','SLOVENIA':'SLO','SLO':'SLO','SERBIA':'SRB','SRB':'SRB','ISRAEL':'ISR','ISR':'ISR','SOUTH AFRICA':'RSA','RSA':'RSA','EGYPT':'EGY','EGY':'EGY','INDIA':'IND','IND':'IND','THAILAND':'THA','THA':'THA','SINGAPORE':'SGP','SGP':'SGP','MALAYSIA':'MAS','MAS':'MAS','INDONESIA':'INA','INA':'INA','IRAN':'IRI','ISLAMIC REPUBLIC OF IRAN':'IRI','IRI':'IRI','IRAQ':'IRQ','IRQ':'IRQ','ALGERIA':'ALG','ALG':'ALG','MOROCCO':'MAR','MAR':'MAR','TUNISIA':'TUN','TUN':'TUN','VENEZUELA':'VEN','VEN':'VEN','ECUADOR':'ECU','ECU':'ECU','URUGUAY':'URU','URU':'URU','PARAGUAY':'PAR','PAR':'PAR','CUBA':'CUB','CUB':'CUB','DOMINICAN REPUBLIC':'DOM','DOM':'DOM','PUERTO RICO':'PUR','PUR':'PUR','ROMANIA':'ROU','ROU':'ROU','BULGARIA':'BUL','BUL':'BUL','LATVIA':'LAT','LAT':'LAT','LITHUANIA':'LTU','LTU':'LTU','ESTONIA':'EST','EST':'EST','HONG KONG':'HKG','HONG KONG, CHINA':'HKG','HKG':'HKG','CHINESE TAIPEI':'TPE','TAIWAN':'TPE','TPE':'TPE'
+};
+function stripAccents(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function normalizeNpc(v){
+  let raw=norm(v); if(!raw) return '';
+  raw=raw.replace(/[\u{1F1E6}-\u{1F1FF}]/gu,'').trim();
+  let up=stripAccents(raw).toUpperCase().replace(/\s+/g,' ').replace(/[()\[\]]/g,' ').trim();
+  let code=up.match(/(?:^|[^A-Z])([A-Z]{3})(?:[^A-Z]|$)/);
+  if(code && NPC_ALIASES[code[1]]) return NPC_ALIASES[code[1]];
+  if(NPC_ALIASES[up]) return NPC_ALIASES[up];
+  // Caso típico: "Spain ESP" o "ESP - Spain".
+  for(const [name,c] of Object.entries(NPC_ALIASES)){
+    if(up===name || up.includes(' '+name+' ') || up.startsWith(name+' ') || up.endsWith(' '+name)) return c;
+  }
+  return /^[A-Z]{3}$/.test(up)?up:raw;
+}
+function looksLikeNpc(v){return !!normalizeNpc(v) && ( /^[A-Z]{3}$/.test(stripAccents(norm(v)).toUpperCase()) || !!NPC_ALIASES[stripAccents(norm(v)).toUpperCase().replace(/\s+/g,' ')] || /\b[A-Z]{3}\b/.test(norm(v)) );}
+
+function save(){localStorage.setItem('wpsLabMarks',JSON.stringify(marks));localStorage.setItem('wpsLabRecords',JSON.stringify(records));refreshAll()}
+function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id)); if(id==='live')initLive(); if(id==='rankings')renderRanking(); if(id==='athletes')renderAthletes(); if(id==='compare')prepCompare(); if(id==='projection')prepProjection(); if(id==='points')calcPoints(); if(id==='records')renderRecords(); if(id==='params')renderParams();}
+function initTabs(){const nav=$('tabs');nav.innerHTML=TABS.map(([id,n])=>`<button class="tab ${id==='dashboard'?'active':''}" data-id="${id}" onclick="go('${id}')">${n}</button>`).join('')}
+function parseTime(v){let s=norm(v).replace(',','.');if(!s)return NaN;let p=s.split(':').map(Number);if(p.some(Number.isNaN))return NaN;if(p.length===1)return p[0];if(p.length===2)return p[0]*60+p[1];if(p.length===3)return p[0]*3600+p[1]*60+p[2];return NaN}
+function fmtTime(sec){if(!isFinite(sec))return '—';let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec-h*3600-m*60;let ss=s.toFixed(2).padStart(5,'0');if(h>0)return `${h}:${String(m).padStart(2,'0')}:${ss}`;if(m>0)return `${m}:${ss}`;return ss}
+function floorTo(v,step){return Math.floor((v+1e-12)/step)*step}
+function paramFor(g,e,c){return PARAMS.find(r=>r.gender===g&&r.event===e&&r.class===c)}
+function secondsToPoints(row,seconds){let a=+row.a,b=+row.b,c=+row.c,s=+seconds;if(!(a>0&&s>0))return NaN;return Math.floor(a*Math.exp(-Math.exp(b-c*(1/s)))+1e-12)}
+function pointsToSeconds(row,points){let a=+row.a,b=+row.b,c=+row.c,p=+points;if(!(a>0&&p>0&&p<a))return NaN;let denom=b-Math.log(Math.log(a/p));return denom>0?floorTo(c/denom,.01):NaN}
+function ensurePoints(m){let sec=parseTime(m.time);let p=paramFor(m.gender,m.event,m.class);if(p&&isFinite(sec))m.points=secondsToPoints(p,sec);m.seconds=sec;return m}
+function classesFor(g,e){return uniq(PARAMS.filter(r=>(!g||r.gender===g)&&(!e||r.event===e)).map(r=>r.class)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}))}
+function eventsFor(g){return uniq(PARAMS.filter(r=>!g||r.gender===g).map(r=>r.event)).sort()}
+
+function classFromParamList(v){
+  const c=String(v||'').toUpperCase().replace(/\s+/g,'');
+  return PARAMS.some(r=>r.class===c)?c:'';
+}
+function validSportClass(v){
+  const c=String(v||'').toUpperCase().replace(/\s+/g,'');
+  if(!/^(S|SB|SM)([1-9]|1[0-4])$/.test(c)) return false;
+  return PARAMS.some(r=>r.class===c);
+}
+function extractClassFromText(text, allowBareNumber=false, eventHint=''){
+  const raw=String(text||'').toUpperCase();
+  if(!raw.trim()) return '';
+  const compact=raw.replace(/\s+/g,'');
+  let direct=compact.match(/^(SM|SB|S)0?([1-9]|1[0-4])$/);
+  if(direct){
+    const c=direct[1]+String(Number(direct[2]));
+    return validSportClass(c)?c:'';
+  }
+  let m=raw.match(/(?:^|[^A-Z0-9])(SM|SB|S)\s*0?([1-9]|1[0-4])(?:[^0-9]|$)/);
+  if(m){
+    const c=m[1]+String(Number(m[2]));
+    return validSportClass(c)?c:'';
+  }
+  // Solo si el campo es claramente la columna de clase admitimos números sueltos 1-14.
+  if(allowBareNumber){
+    const b=raw.match(/^\s*0?([1-9]|1[0-4])\s*$/);
+    if(b){
+      let n=String(Number(b[1]));
+      let hint=low(eventHint);
+      let prefix=hint.includes('breast')||hint.includes('braza')?'SB':(hint.includes('medley')||hint.includes('estilos')?'SM':'S');
+      let c=prefix+n;
+      return validSportClass(c)?c:'';
+    }
+  }
+  return '';
+}
+function extractClassFromFields(...fields){
+  // Los cuatro primeros suelen ser campos específicos de clase. Ahí sí aceptamos 9 -> S9/SB9/SM9 según la prueba.
+  const eventHint=fields.filter(Boolean).join(' ');
+  for(let i=0;i<fields.length;i++){
+    const c=extractClassFromText(fields[i], i<4, eventHint);
+    if(c) return c;
+  }
+  return '';
+}
+function inferClassWithContext(obj,event,gender,row=[]){
+  const classFields=[obj.class,obj.sportclass,obj.sportclasscode,obj.classification,obj.swimmingclass,obj.paraclass,obj.disabilityclass].filter(Boolean);
+  let c=extractClassFromFields(...classFields,event,obj.event,obj.race,obj.discipline,obj.eventname);
+  if(c) return c;
+  // Si la clase viene pegada a la prueba: "Men 50m Freestyle S9".
+  c=extractClassFromFields(obj.event,obj.race,obj.discipline,obj.eventname,event);
+  if(c) return c;
+  // Si la columna clase es solo número, crear prefijo según estilo: braza=SB, estilos=SM, resto=S.
+  for(const f of classFields){
+    const n=String(f||'').match(/^\s*0?([1-9]|1[0-4])\s*$/);
+    if(n){
+      let hint=low([event,obj.event,obj.race,obj.discipline,obj.eventname].filter(Boolean).join(' '));
+      let prefix=hint.includes('breast')||hint.includes('braza')?'SB':(hint.includes('medley')||hint.includes('estilos')?'SM':'S');
+      let guess=prefix+String(Number(n[1]));
+      if(validSportClass(guess)) return guess;
+    }
+  }
+  // Último recurso: escanear la fila, pero nunca convertir distancias como 50/100 en clase.
+  for(const cell of row.map(norm)){
+    let cc=extractClassFromText(cell,false);
+    if(cc) return cc;
+  }
+  return '';
+}
+function detectDelimiter(text){
+  const lines=String(text||'').split(/\r?\n/).filter(l=>l.trim()).slice(0,30);
+  const candidates=[',',';','\t'];
+  let best=',',bestScore=-1;
+  for(const d of candidates){
+    let score=0;
+    for(const line of lines){
+      let q=false,count=0;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i],nx=line[i+1];
+        if(ch==='"'){ if(q&&nx==='"') i++; else q=!q; }
+        else if(ch===d && !q) count++;
+      }
+      if(count>0) score+=count*count;
+    }
+    if(score>bestScore){bestScore=score;best=d;}
+  }
+  return best;
+}
+
+function csvParse(text){
+  text=String(text||'').replace(/^\uFEFF/,'');
+  const delimiter=detectDelimiter(text);
+  let rows=[],row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){
+    let ch=text[i],nx=text[i+1];
+    if(ch==='"'){
+      if(q&&nx==='"'){cur+='"';i++} else q=!q;
+    }else if(ch===delimiter&&!q){
+      row.push(cur);cur='';
+    }else if((ch==='\n'||ch==='\r')&&!q){
+      if(ch==='\r'&&nx==='\n')i++;
+      row.push(cur);
+      if(row.some(x=>String(x).trim()!==''))rows.push(row);
+      row=[];cur='';
+    }else cur+=ch;
+  }
+  row.push(cur);
+  if(row.some(x=>String(x).trim()!==''))rows.push(row);
+  return rows;
+}
+function cleanHeader(h){return low(h).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'')}
+function mapHeader(h){
+  let x=cleanHeader(h);
+  if(['athlete','athletename','athletefullname','name','fullname','fullnamenational','swimmer','swimmername','competitor','competitorname','participant','participantname','nombre','nadador','athletefull'].includes(x))return 'athlete';
+  if(['firstname','first','givenname','nombrepila'].includes(x))return 'firstName';
+  if(['lastname','surname','familyname','secondname','apellidos','apellido'].includes(x))return 'lastName';
+  if(['npc','npccode','country','countrycode','countryname','countryteam','npccountry','nation','nationcode','nationality','pais','país','codigopais','countryregion','countryofrepresentation','nacion','nationalfederation','clubcountry','team','teamcode','federation'].includes(x))return 'npc';
+  if(['gender','sex','sexo','genero','maleorfemale','mf'].includes(x))return 'gender';
+  if(['event','eventname','prueba','race','racediscipline','discipline','distanceevent','eventdiscipline','stroke','swimmingevent'].includes(x))return 'event';
+  if(['class','sportclass','sportclasscode','classification','clase','classcode','swimmingclass','paraClass','paraclass','disabilityclass','sportclassification','classstatus'].map(cleanHeader).includes(x))return 'class';
+  if(['time','tiempo','mark','marca','result','resulttime','results','performance','finaltime','swimtime','besttime','entrytime'].includes(x))return 'time';
+  if(['date','fecha','resultdate','competitiondate'].includes(x))return 'date';
+  if(['competition','competitionname','meet','meetname','competicion','campeonato','eventcompetition'].includes(x))return 'competition';
+  if(['rank','ranking','position','posicion','place','rankposition','no'].includes(x))return 'rank';
+  if(['points','point','puntos','score','wpspoints'].includes(x))return 'points';
+  if(['type','tipo','recordtype'].includes(x))return 'type';
+  return x;
+}
+function normalizeGender(g){
+  let x=low(g).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,'');
+  if(['m','men','male','masculino','hombre','boys','boy'].includes(x))return 'Men';
+  if(['w','women','woman','female','femenino','mujer','girls','girl'].includes(x))return 'Women';
+  return norm(g);
+}
+function normalizeClass(v){
+  let s=norm(v).toUpperCase().replace(/\s+/g,'');
+  let m=s.match(/\b(SM|SB|S)\d{1,2}\b/)||s.match(/(SM|SB|S)\d{1,2}/);
+  return m?m[0]:s;
+}
+function normalizeEvent(v,gender='',sportClass=''){
+  let raw=norm(v);
+  if(!raw)return '';
+  let s=raw.replace(/Men'?s|Women'?s|Male|Female|Masculino|Femenino/ig,' ').replace(/\b(SM|SB|S)([1-9]|1[0-3])\b/ig,' ').replace(/\s+/g,' ').trim();
+  s=s.replace(/(\d+)\s*m\b/i,'$1 m');
+  const lowS=low(s);
+  const dist=(lowS.match(/\b(50|100|150|200|400)\s*m\b/)||lowS.match(/\b(50|100|150|200|400)m\b/)||[])[1];
+  const strokes=[['freestyle','Freestyle'],['free','Freestyle'],['crol','Freestyle'],['backstroke','Backstroke'],['back','Backstroke'],['espalda','Backstroke'],['breaststroke','Breaststroke'],['breast','Breaststroke'],['braza','Breaststroke'],['butterfly','Butterfly'],['fly','Butterfly'],['mariposa','Butterfly'],['individualmedley','Individual Medley'],['medley','Individual Medley'],['estilos','Individual Medley']];
+  let stroke='';
+  for(const [k,n] of strokes){ if(lowS.replace(/\s/g,'').includes(k.replace(/\s/g,''))){stroke=n;break;} }
+  if(dist&&stroke)return `${dist} m ${stroke}`;
+  return s;
+}
+function inferGenderFromRow(obj){
+  let raw=[obj.gender,obj.event,obj.race,obj.discipline].filter(Boolean).join(' ');
+  if(/women|female|femenino|mujer/i.test(raw))return 'Women';
+  if(/men|male|masculino|hombre/i.test(raw))return 'Men';
+  return normalizeGender(obj.gender||'');
+}
+function findHeaderRow(rows){
+  let best=0,bestScore=-1;
+  rows.slice(0,20).forEach((r,i)=>{
+    const mapped=r.map(mapHeader);
+    const score=['athlete','firstName','lastName','npc','gender','event','class','time','rank','points','date','competition'].reduce((n,k)=>n+(mapped.includes(k)?1:0),0);
+    if(score>bestScore){bestScore=score;best=i;}
+  });
+  return best;
+}
+function rowToObj(headers,row){
+  let obj={};
+  headers.forEach((h,i)=>{ if(h) obj[h]=norm(row[i]); });
+  return obj;
+}
+function guessTimeFromRow(obj,row){
+  let candidates=[obj.time,obj.result,obj.mark,obj.performance].filter(Boolean);
+  if(!candidates.length){
+    candidates=row.map(x=>norm(x)).filter(x=>/^\d{1,2}(:\d{2})?(\.\d{1,2}|,\d{1,2})?$/.test(x) || /^\d{1,2}:\d{2}[\.,]\d{1,2}$/.test(x));
+  }
+  for(const c of candidates){ if(isFinite(parseTime(c))) return c; }
+  return '';
+}
+function guessAthleteFromRow(obj,row=[]){
+  let direct=obj.athlete || obj.competitor || [obj.firstName,obj.lastName].filter(Boolean).join(' ').trim() || [obj.givenname,obj.familyname].filter(Boolean).join(' ').trim();
+  if(direct) return direct;
+  // Fallback: primer texto largo que no parezca prueba, país, género, clase, fecha ni tiempo.
+  for(const cell of row.map(norm)){
+    if(!cell) continue;
+    if(isFinite(parseTime(cell))) continue;
+    if(extractClassFromText(cell,false)) continue;
+    if(/\b(50|100|150|200|400)\s*m\b/i.test(cell)) continue;
+    if(/^(MEN|WOMEN|MALE|FEMALE|M|F|MASCULINO|FEMENINO)$/i.test(cell)) continue;
+    if(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}/.test(cell) || /^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}/.test(cell)) continue;
+    if(/^[A-Z]{3}$/.test(cell)) continue;
+    if(/[A-Za-zÀ-ÿ]{2,}\s+[A-Za-zÀ-ÿ]{2,}/.test(cell)) return cell;
+  }
+  return '';
+}
+function guessNpcFromRow(obj,row=[]){
+  let direct=obj.npc||obj.country||obj.nation||obj.nationality||obj.countrycode||obj.team||obj.federation||'';
+  let n=normalizeNpc(direct);
+  if(n) return n;
+  // Busca primero códigos NPC claros de tres letras, evitando pruebas/clases/tiempos.
+  for(const cell of row.map(norm)){
+    if(!cell) continue;
+    if(isFinite(parseTime(cell))) continue;
+    if(extractClassFromText(cell,false)) continue;
+    if(/\b(50|100|150|200|400)\s*m\b/i.test(cell)) continue;
+    const c=normalizeNpc(cell);
+    if(c && /^[A-Z]{3}$/.test(c)) return c;
+  }
+  // Segundo intento: nombres completos de países.
+  for(const cell of row.map(norm)){
+    const c=normalizeNpc(cell);
+    if(c && /^[A-Z]{3}$/.test(c)) return c;
+  }
+  return '';
+}
+function normalizeImportedObject(obj,row){
+  let athlete=guessAthleteFromRow(obj,row||[]);
+  let gender=inferGenderFromRow(obj);
+  let eventRaw=obj.event||obj.race||obj.discipline||obj.eventname||'';
+  let event=normalizeEvent(eventRaw,gender,'');
+  let sportClass=inferClassWithContext(obj,event,gender,row||[]);
+  event=normalizeEvent(eventRaw,gender,sportClass);
+  let time=guessTimeFromRow(obj,row||[]);
+  let pointsRaw=obj.points||obj.score||'';
+  let m={
+    athlete:athlete,
+    npc:guessNpcFromRow(obj,row||[]),
+    gender:gender,
+    event:event,
+    class:validSportClass(sportClass)?sportClass:'',
+    time:time,
+    date:obj.date||obj.fecha||obj.resultdate||'',
+    competition:obj.competition||obj.meet||obj.competitionname||'',
+    rank:obj.rank||obj.position||obj.place||'',
+    points:pointsRaw?Number(String(pointsRaw).replace(',','.')):''
+  };
+  return m;
+}
+function importCsv(){
+  let text=$('csvText').value;
+  if(!norm(text)){$('importMsg').textContent='No hay datos para importar. Selecciona un archivo o pega el CSV en el cuadro.';return}
+  let arr=csvParse(text);
+  if(arr.length<2){$('importMsg').textContent='No encuentro filas suficientes. Revisa que el archivo no esté vacío y que sea CSV/TSV real.';return}
+  const headerIndex=findHeaderRow(arr);
+  let headers=arr[headerIndex].map(mapHeader);
+  let added=0, skipped=0, skippedExamples=[];
+  for(let r of arr.slice(headerIndex+1)){
+    if(!r.some(x=>norm(x))) continue;
+    let obj=rowToObj(headers,r);
+    let m=normalizeImportedObject(obj,r);
+    if(!m.athlete || !m.time){
+      skipped++;
+      if(skippedExamples.length<3) skippedExamples.push(r.slice(0,8).join(' | '));
+      continue;
+    }
+    marks.push(ensurePoints(m));added++;
+  }
+  if(added>0){
+    save();
+    $('importMsg').textContent=`Importación correcta: ${added} marcas añadidas. Clases y países normalizados. ${skipped?skipped+' filas omitidas por faltar atleta o tiempo. ':''}Total guardado: ${marks.length}.`;
+    $('csvText').value='';
+    go('rankings');
+  }else{
+    $('importMsg').innerHTML=`No he podido importar marcas. Detecté ${arr.length} filas y la cabecera parece estar en la fila ${headerIndex+1}, pero no encuentro columnas válidas de atleta y tiempo.<br><br><b>Cabeceras detectadas:</b> ${arr[headerIndex].join(' | ')}${skippedExamples.length?'<br><br><b>Ejemplos de filas leídas:</b><br>'+skippedExamples.join('<br>'):''}<br><br>Solución rápida: pega aquí 3-4 líneas del CSV y lo adapto exactamente a ese formato.`;
+  }
+}
+function readBufferAsText(buf){
+  const decoders=['utf-8','windows-1252','iso-8859-1'];
+  for(const enc of decoders){
+    try{
+      const text=new TextDecoder(enc,{fatal:false}).decode(buf);
+      if(text && text.trim()) return text;
+    }catch(e){}
+  }
+  return '';
+}
+function loadSheetJs(){
+  return new Promise((resolve,reject)=>{
+    if(window.XLSX) return resolve(window.XLSX);
+    const sc=document.createElement('script');
+    sc.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    sc.onload=()=>resolve(window.XLSX);
+    sc.onerror=()=>reject(new Error('No se pudo cargar el lector Excel. Si estás sin internet, exporta la hoja como CSV.'));
+    document.head.appendChild(sc);
+  });
+}
+async function importExcelBuffer(buf,fileName){
+  const XLSX=await loadSheetJs();
+  const wb=XLSX.read(buf,{type:'array'});
+  let total=0, chosen='';
+  for(const sheetName of wb.SheetNames){
+    const ws=wb.Sheets[sheetName];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});
+    if(rows.length>1){
+      chosen=sheetName;
+      $('csvText').value=rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n');
+      importCsv();
+      total=rows.length;
+      break;
+    }
+  }
+  if(!total) $('importMsg').textContent='El Excel no tiene hojas con datos importables.';
+  else $('importMsg').textContent+=' Hoja Excel leída: '+chosen+'.';
+}
+async function readCsvFile(file){
+  if(!file)return;
+  const name=(file.name||'').toLowerCase();
+  $('importMsg').textContent='Leyendo archivo: '+file.name+' ...';
+  try{
+    const buf=await file.arrayBuffer();
+    if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+      await importExcelBuffer(buf,file.name);
+      return;
+    }
+    const text=readBufferAsText(buf);
+    $('csvText').value=text;
+    importCsv();
+  }catch(e){
+    $('importMsg').textContent='No se pudo leer/importar el archivo: '+e.message;
+  }
+}
+(function bindImportEvents(){
+  const fileInput=$('csvFile');
+  if(fileInput) fileInput.addEventListener('change',e=>readCsvFile(e.target.files[0]));
+  const drop=document.querySelector('.drop');
+  drop?.addEventListener('dragover',e=>{e.preventDefault();e.currentTarget.style.borderColor='#64d2ff'});
+  drop?.addEventListener('dragleave',e=>{e.currentTarget.style.borderColor='#5d7da7'});
+  drop?.addEventListener('drop',e=>{e.preventDefault();e.currentTarget.style.borderColor='#5d7da7';readCsvFile(e.dataTransfer.files[0])});
+})();
+function clearMarks(){if(confirm('¿Borrar todas las marcas guardadas en este navegador?')){marks=[];save();$('importMsg').textContent='Marcas borradas.'}}
+function clearRecords(){if(confirm('¿Borrar records guardados?')){records=[];save()}}
+function fillSelect(id,vals,all=false){let el=$(id),old=el.value;el.innerHTML=(all?'<option value="">Todos</option>':'')+vals.map(v=>`<option>${v}</option>`).join(''); if(vals.includes(old)||old==='')el.value=old;}
+function populateBase(){fillSelect('mGender',uniq(PARAMS.map(r=>r.gender)));fillSelect('mEvent',eventsFor($('mGender').value));fillSelect('mClass',classesFor($('mGender').value,$('mEvent').value));['mGender','mEvent'].forEach(id=>$(id).addEventListener('change',()=>{fillSelect('mEvent',eventsFor($('mGender').value));fillSelect('mClass',classesFor($('mGender').value,$('mEvent').value))}));fillSelect('ptGender',uniq(PARAMS.map(r=>r.gender)));fillSelect('ptEvent',eventsFor($('ptGender').value));fillSelect('ptClass',classesFor($('ptGender').value,$('ptEvent').value));['ptGender','ptEvent','ptClass'].forEach(id=>$(id).addEventListener('change',()=>{if(id==='ptGender')fillSelect('ptEvent',eventsFor($('ptGender').value));if(id!=='ptClass')fillSelect('ptClass',classesFor($('ptGender').value,$('ptEvent').value));calcPoints()}));}
+function addManualMark(){let m={athlete:norm($('mAthlete').value),npc:norm($('mNpc').value),gender:$('mGender').value,event:$('mEvent').value,class:$('mClass').value,time:norm($('mTime').value),date:$('mDate').value,competition:norm($('mComp').value),rank:'',points:''};if(!m.athlete||!m.time){alert('Falta atleta o tiempo.');return}marks.push(ensurePoints(m));['mAthlete','mNpc','mTime','mDate','mComp'].forEach(id=>$(id).value='');save()}
+function filterControls(containerId,prefix){let g=uniq(PARAMS.map(r=>r.gender)), e=uniq(PARAMS.map(r=>r.event)).sort(), c=uniq(PARAMS.map(r=>r.class)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));$(containerId).innerHTML=`<div class="field small"><label>Género</label><select id="${prefix}Gender"><option value="">Todos</option>${g.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="field"><label>Prueba</label><select id="${prefix}Event"><option value="">Todas</option>${e.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="field small"><label>Clase</label><select id="${prefix}Class"><option value="">Todas</option>${c.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="field"><label>Buscar</label><input id="${prefix}Q" placeholder="Atleta, país, competición..."></div><button class="btn" onclick="renderRanking()">Filtrar</button>`;['Gender','Event','Class','Q'].forEach(x=>$(prefix+x).addEventListener('input',renderRanking));}
+function filteredMarks(prefix='rk'){let q=low($(prefix+'Q')?.value||''),g=$(prefix+'Gender')?.value||'',e=$(prefix+'Event')?.value||'',c=$(prefix+'Class')?.value||'';return marks.map(m=>ensurePoints({...m})).filter(m=>(!g||m.gender===g)&&(!e||m.event===e)&&(!c||m.class===c)&&(!q||low(Object.values(m).join(' ')).includes(q))).sort((a,b)=>(a.seconds||99999)-(b.seconds||99999));}
+function tagsFor(m,idx,list){let tags=[];if(idx<3)tags.push('Top 3'); if(idx<8)tags.push('Top 8'); if(m.points>=1000)tags.push('1000+'); let rec=bestRecord(m); if(rec&&isFinite(m.seconds)){let d=m.seconds-parseTime(rec.time); if(d>=0&&d<=1)tags.push('Near record')} return tags.map(t=>`<span class="pill">${t}</span>`).join('')}
+function renderRanking(){let list=filteredMarks('rk');$('rankBody').innerHTML=list.map((m,i)=>`<tr><td>${i+1}</td><td>${m.athlete}</td><td>${m.npc}</td><td>${m.gender}</td><td>${m.event}</td><td>${m.class}</td><td class="right">${fmtTime(m.seconds)}</td><td class="right">${m.points||'—'}</td><td>${m.date||''}</td><td>${m.competition||''}</td><td>${tagsFor(m,i,list)}</td></tr>`).join('')||`<tr><td colspan="11" class="muted">No hay marcas cargadas para este filtro.</td></tr>`}
+function athleteGroups(){let map={};marks.forEach(m=>{let k=m.athlete||'Sin nombre';(map[k]??=[]).push(ensurePoints({...m}))});return map}
+function renderAthletes(){let q=low($('athSearch').value),map=athleteGroups();let names=Object.keys(map).filter(n=>!q||low(n+' '+map[n].map(x=>Object.values(x).join(' ')).join(' ')).includes(q)).sort();$('athList').innerHTML=names.map(n=>{let arr=map[n];let best=Math.max(...arr.map(x=>+x.points||0));let npc=uniq(arr.map(x=>x.npc)).join(', ');return `<tr><td>${n}</td><td>${npc}</td><td class="right">${arr.length}</td><td class="right">${best||'—'}</td><td><button class="btn secondary" onclick="showAthlete('${n.replaceAll("'","\\'")}')">Ver</button></td></tr>`}).join('')||`<tr><td colspan="5" class="muted">Sin atletas.</td></tr>`; if(currentAthlete)showAthlete(currentAthlete,false)}
+function showAthlete(n,set=true){if(set)currentAthlete=n;let arr=(athleteGroups()[n]||[]).sort((a,b)=>(a.event+a.class).localeCompare(b.event+b.class)||a.seconds-b.seconds);let bestBy={};arr.forEach(m=>{let k=m.event+' '+m.class;if(!bestBy[k]||m.seconds<bestBy[k].seconds)bestBy[k]=m});let html=`<h3>${n}</h3><p>${uniq(arr.map(x=>x.npc)).join(', ')} · ${arr.length} marcas · ${Object.keys(bestBy).length} pruebas/clases</p><div>${Object.values(bestBy).map(m=>`<span class="pill">${m.event} ${m.class}: ${fmtTime(m.seconds)} · ${m.points||'—'} pts</span>`).join('')}</div><h3 style="margin-top:16px">Todas las marcas</h3><div class="tableWrap"><table><thead><tr><th>Fecha</th><th>Prueba</th><th>Clase</th><th>Tiempo</th><th>Puntos</th><th>Competición</th><th>Dif. record</th></tr></thead><tbody>${arr.map(m=>{let rec=bestRecord(m),dif=rec?m.seconds-parseTime(rec.time):NaN;return `<tr><td>${m.date||''}</td><td>${m.event}</td><td>${m.class}</td><td class="right">${fmtTime(m.seconds)}</td><td class="right">${m.points||'—'}</td><td>${m.competition||''}</td><td class="right">${isFinite(dif)?(dif>=0?'+':'')+dif.toFixed(2):'—'}</td></tr>`}).join('')}</tbody></table></div>`;$('athProfile').innerHTML=html}
+function prepCompare(){let names=Object.keys(athleteGroups()).sort();['cmp1','cmp2','cmp3'].forEach((id,i)=>fillSelect(id,['',...names]));fillSelect('cmpEvent',['',...uniq(marks.map(m=>m.event)).sort()]);fillSelect('cmpClass',['',...uniq(marks.map(m=>m.class)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}))]);}
+function renderCompare(){let sel=['cmp1','cmp2','cmp3'].map(id=>$(id).value).filter(Boolean),ev=$('cmpEvent').value,cl=$('cmpClass').value;let rows=sel.map(n=>{let arr=(athleteGroups()[n]||[]).filter(m=>(!ev||m.event===ev)&&(!cl||m.class===cl)).sort((a,b)=>a.seconds-b.seconds);let best=arr[0];let avg=arr.slice(0,3).reduce((s,x)=>s+x.seconds,0)/Math.min(3,arr.length);return {n,best,avg,count:arr.length}});let bestSec=Math.min(...rows.map(r=>r.best?.seconds??99999));$('cmpOut').innerHTML=`<div class="tableWrap"><table><thead><tr><th>Atleta</th><th>Mejor tiempo</th><th>Dif.</th><th>Media mejores 3</th><th>Mejor puntos</th><th>Marcas</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.n}</td><td class="right">${r.best?fmtTime(r.best.seconds):'—'}</td><td class="right">${r.best?('+'+(r.best.seconds-bestSec).toFixed(2)):'—'}</td><td class="right">${isFinite(r.avg)?fmtTime(r.avg):'—'}</td><td class="right">${r.best?.points||'—'}</td><td class="right">${r.count}</td></tr>`).join('')}</tbody></table></div>`}
+function prepProjection(){fillSelect('prGender',uniq(PARAMS.map(r=>r.gender)),true);fillSelect('prEvent',uniq(PARAMS.map(r=>r.event)).sort(),true);fillSelect('prClass',uniq(PARAMS.map(r=>r.class)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})),true);['prGender','prEvent','prClass'].forEach(id=>$(id).onchange=renderProjection)}
+function yearOf(d){let m=String(d||'').match(/(19|20)\d{2}/);return m?+m[0]:null}
+function linear(xs,ys,target){let n=xs.length,sx=xs.reduce((a,b)=>a+b,0),sy=ys.reduce((a,b)=>a+b,0),sxy=xs.reduce((s,x,i)=>s+x*ys[i],0),sx2=xs.reduce((s,x)=>s+x*x,0);let den=n*sx2-sx*sx;if(!den)return NaN;let b=(n*sxy-sx*sy)/den,a=(sy-b*sx)/n;return a+b*target}
+function renderProjection(){let g=$('prGender').value,e=$('prEvent').value,c=$('prClass').value,target=+$('prYear').value;let list=marks.map(m=>ensurePoints({...m})).filter(m=>(!g||m.gender===g)&&(!e||m.event===e)&&(!c||m.class===c)&&yearOf(m.date)&&isFinite(m.seconds));let by={};list.forEach(m=>{let y=yearOf(m.date);if(!by[y]||m.seconds<by[y])by[y]=m.seconds});let years=Object.keys(by).map(Number).sort(), vals=years.map(y=>by[y]);let pred=years.length>=2?linear(years,vals,target):NaN;let top=list.sort((a,b)=>a.seconds-b.seconds);let top3=top.slice(0,3);$('projOut').innerHTML=years.length?`<p><b>Mejor marca anual cargada:</b> ${years.map(y=>`${y}: ${fmtTime(by[y])}`).join(' · ')}</p><p><b>Proyección ${target}:</b> <span class="${isFinite(pred)?'ok':'warn'}">${isFinite(pred)?fmtTime(pred):'datos insuficientes'}</span></p><p class="muted">Estimación lineal simple. Para oro/plata/bronce reales conviene cargar rankings completos por temporada.</p><div class="tableWrap"><table><thead><tr><th>Pos.</th><th>Atleta</th><th>Tiempo</th><th>Fecha</th><th>Competición</th></tr></thead><tbody>${top3.map((m,i)=>`<tr><td>${i+1}</td><td>${m.athlete}</td><td>${fmtTime(m.seconds)}</td><td>${m.date||''}</td><td>${m.competition||''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="warn">No hay datos suficientes para esta combinación.</p>';renderChart(years,vals)}
+function renderChart(years,vals){let box=$('chart');if(!years.length){box.innerHTML='<span class="muted">Sin datos</span>';return}let max=Math.max(...vals),min=Math.min(...vals),range=max-min||1;box.innerHTML=years.map((y,i)=>{let h=30+(max-vals[i])/range*160;return `<div class="bar" style="height:${h}px"><span>${y} ${fmtTime(vals[i])}</span></div>`}).join('')}
+function calcPoints(){let row=paramFor($('ptGender').value,$('ptEvent').value,$('ptClass').value);if(!row)return;let sec=parseTime($('ptTime').value),pts=Number($('ptPoints').value);let out=[];if(isFinite(sec))out.push(`<b>Tiempo → puntos:</b> ${fmtTime(sec)} = <span class="ok">${secondsToPoints(row,sec)}</span> puntos`);if(isFinite(pts)&&pts>0)out.push(`<b>Puntos → tiempo:</b> ${pts} puntos = <span class="ok">${fmtTime(pointsToSeconds(row,pts))}</span>`);$('ptResult').innerHTML=out.join('<br>')||'Introduce un tiempo o puntos.';$('paramCard').innerHTML=`<p><span class="pill">${row.gender}</span><span class="pill">${row.event}</span><span class="pill">${row.class}</span></p><table><tr><th>a</th><td>${row.a}</td></tr><tr><th>b</th><td>${row.b}</td></tr><tr><th>c</th><td>${row.c}</td></tr><tr><th>1000 puntos</th><td>${fmtTime(row.ref1000Seconds)}</td></tr></table>`}
+function importRecords(){let text=$('recText').value.trim();if(!text)return;let arr=csvParse(text),headers=arr[0].map(mapHeader),add=0;arr.slice(1).forEach(r=>{let o={};headers.forEach((h,i)=>o[h]=norm(r[i]));if(o.time){records.push({type:o.type||'Record',gender:normalizeGender(o.gender||''),event:o.event||'',class:o.class||'',time:o.time,athlete:o.athlete||'',npc:o.npc||'',date:o.date||''});add++}});$('recText').value='';save()}
+function bestRecord(m){let rs=records.filter(r=>r.gender===m.gender&&r.event===m.event&&r.class===m.class&&isFinite(parseTime(r.time))).sort((a,b)=>parseTime(a.time)-parseTime(b.time));return rs[0]}
+function renderRecords(){$('recBody').innerHTML=records.map(r=>`<tr><td>${r.type}</td><td>${r.gender}</td><td>${r.event}</td><td>${r.class}</td><td>${r.time}</td><td>${r.athlete}</td><td>${r.npc}</td><td>${r.date}</td></tr>`).join('')||`<tr><td colspan="8" class="muted">Sin records cargados.</td></tr>`}
+function generateReport(){let q=low($('repQuery').value),type=$('repType').value;let list=marks.map(m=>ensurePoints({...m})).filter(m=>!q||low(Object.values(m).join(' ')).includes(q)).sort((a,b)=>a.seconds-b.seconds);if(!list.length){$('reportOut').textContent='No hay datos para ese filtro.';return}let best=list[0],ath=best.athlete,top=list.slice(0,8);let base=`${ath||'El/la nadador/a destacado/a'} registra la mejor marca del filtro seleccionado con ${fmtTime(best.seconds)} en ${best.event} ${best.class}, correspondiente a ${best.points||'—'} puntos WPS. La marca figura asociada a ${best.npc||'NPC no indicado'}${best.date?' en '+best.date:''}${best.competition?' durante '+best.competition:''}.`;
+let extra=`\n\nTop de referencia cargado:\n`+top.map((m,i)=>`${i+1}. ${m.athlete} (${m.npc}) · ${m.event} ${m.class} · ${fmtTime(m.seconds)} · ${m.points||'—'} pts`).join('\n');
+let text=base+extra;if(type==='technical')text=`Informe técnico\n\n${base}\n\nDesde una lectura de rendimiento, conviene observar la diferencia entre la mejor marca y el resto del grupo, la regularidad competitiva y la distancia respecto a records o estándares cargados. La herramienta calcula puntos WPS a partir de los parámetros oficiales 2026, por lo que permite comparar marcas dentro de una misma combinación de género, prueba y clase.${extra}`;if(type==='academic')text=`Análisis académico breve\n\n${base}\n\nEstos datos permiten estudiar la profundidad competitiva de la prueba, la evolución del rendimiento y la concentración de marcas por atleta o país. La interpretación debe realizarse con cautela: la fiabilidad de la proyección depende del número de temporadas cargadas y de la calidad de los datos importados.${extra}`;$('reportOut').textContent=text}
+function copyReport(){navigator.clipboard?.writeText($('reportOut').textContent)}
+function renderParams(){let q=low($('paramFilter')?.value||'');let list=PARAMS.filter(r=>!q||low(Object.values(r).join(' ')).includes(q));$('paramBody').innerHTML=list.map(r=>`<tr><td>${r.gender}</td><td>${r.event}</td><td>${r.class}</td><td>${r.a}</td><td>${r.b}</td><td>${r.c}</td><td>${fmtTime(r.ref1000Seconds)}</td></tr>`).join('')}
+function downloadCsv(name,rows){let csv=rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n');let blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+function downloadCurrentRanking(){let list=filteredMarks('rk');downloadCsv('wps_ranking_filtrado.csv',[['Athlete','NPC','Gender','Event','Class','Time','Points','Date','Competition'],...list.map(m=>[m.athlete,m.npc,m.gender,m.event,m.class,fmtTime(m.seconds),m.points,m.date,m.competition])])}
+function downloadParams(){downloadCsv('wps_parameters_2026.csv',[['Gender','Event','Class','a','b','c','Ref1000Seconds'],...PARAMS.map(r=>[r.gender,r.event,r.class,r.a,r.b,r.c,r.ref1000Seconds])])}
+function loadDemo(){let demo=`Athlete,NPC,Gender,Event,Class,Time,Date,Competition\nExample Swimmer A,ESP,Men,50 m Freestyle,S9,25.10,2024-06-01,Demo Open\nExample Swimmer B,FRA,Men,50 m Freestyle,S9,25.42,2025-05-12,Demo Series\nExample Swimmer C,GBR,Men,50 m Freestyle,S9,25.28,2026-03-02,Demo Champs\nExample Swimmer A,ESP,Men,100 m Freestyle,S9,55.80,2025-07-01,Demo Worlds\nExample Swimmer D,ITA,Women,100 m Backstroke,S10,1:09.20,2026-04-01,Demo Cup`; $('csvText').value=demo}
+
+function initLive(){let saved=localStorage.getItem('wpsLiveApiUrl')||''; if($('liveApiUrl')&&!$('liveApiUrl').value)$('liveApiUrl').value=saved;}
+function loadOfficialRankingInFrame(){let f=$('liveFrame'); if(f){f.removeAttribute('srcdoc'); f.src='https://www.ipc-services.org/sdms/public/rankings/swm'} $('liveStatus').textContent='Cargando una sola vez el ranking público de IPC Services dentro del cuadro blanco. No se abre ventana nueva.'}
+function reloadLiveFrame(){let f=$('liveFrame'); if(f){f.removeAttribute('srcdoc'); f.src='about:blank'; setTimeout(()=>f.src='https://www.ipc-services.org/sdms/public/rankings/swm',350)} $('liveStatus').textContent='Visor recargado manualmente. Si la vista previa vuelve a pedir permiso varias veces, conviene abrir el HTML en Chrome/Edge fuera de la vista previa.'}
+function clearLiveFrame(){let f=$('liveFrame'); if(f){f.src='about:blank'; f.srcdoc='<div style=&quot;font-family:Arial,sans-serif;padding:28px;color:#334;background:#f4f6f8;height:100%;box-sizing:border-box&quot;><h2 style=&quot;margin-top:0&quot;>Visor detenido</h2><p>Se ha limpiado el visor para cortar conexiones externas.</p><p>Pulsa el botón superior para cargar de nuevo el ranking dentro de este cuadro.</p></div>'} $('liveStatus').textContent='Visor limpiado. No hay conexión activa con IPC Services.'}
+function saveLiveApi(){let u=norm($('liveApiUrl')?.value||''); localStorage.setItem('wpsLiveApiUrl',u); $('liveApiMsg').textContent=u?'URL del conector guardada en este navegador.':'URL borrada.'}
+async function fetchLiveJson(){let u=norm($('liveApiUrl')?.value||localStorage.getItem('wpsLiveApiUrl')||''); if(!u){$('liveApiMsg').textContent='Falta la URL del conector JSON.';return} saveLiveApi(); $('liveApiMsg').textContent='Conectando con el conector...'; try{let res=await fetch(u,{cache:'no-store'}); if(!res.ok)throw new Error('HTTP '+res.status); let js=await res.json(); let arr=Array.isArray(js)?js:(js.data||js.results||js.items||[]); if(!Array.isArray(arr))throw new Error('El JSON no contiene una lista de resultados.'); let added=0; arr.forEach(o=>{let m={athlete:norm(o.athlete||o.name||o.swimmer),npc:norm(o.npc||o.country||o.nation),gender:normalizeGender(o.gender||o.sex),event:norm(o.event||o.race),class:extractClassFromFields(o.class,o.sportClass,o.sportclass,o.classification,o.event,o.race),time:norm(o.time||o.mark||o.result),date:norm(o.date),competition:norm(o.competition||o.meet),rank:norm(o.rank||o.position),points:o.points?Number(o.points):''}; if(m.athlete&&m.time){marks.push(ensurePoints(m)); added++;}}); save(); $('liveApiMsg').textContent=`Importadas ${added} marcas desde el conector en vivo. Total guardado: ${marks.length}.`; go('rankings');}catch(e){$('liveApiMsg').textContent='No se pudo importar: '+e.message+'. Puede ser CORS, bloqueo anti-bot o formato JSON no compatible.'}}
+
+
+// ===== LIVE DIRECT RANKING V11 =====
+function normaliseLiveRows(payload){
+  let raw=[];
+  if(Array.isArray(payload)) raw=payload;
+  else if(payload && Array.isArray(payload.data)) raw=payload.data;
+  else if(payload && Array.isArray(payload.results)) raw=payload.results;
+  else if(payload && Array.isArray(payload.items)) raw=payload.items;
+  else if(payload && typeof payload.html==='string') raw=parseHtmlRankingRows(payload.html);
+  else raw=[];
+  return raw.map(o=>normalizeImportedObject({
+    athlete:o.athlete||o.name||o.swimmer||o.competitor||o.participant||'',
+    firstName:o.firstName||o.firstname||o.givenName||'',
+    lastName:o.lastName||o.lastname||o.surname||o.familyName||'',
+    npc:o.npc||o.country||o.nation||o.countryCode||o.nationality||'',
+    gender:o.gender||o.sex||'',
+    event:o.event||o.race||o.discipline||o.eventName||'',
+    class:o.class||o.sportClass||o.sportclass||o.classification||'',
+    time:o.time||o.mark||o.result||o.resultTime||o.performance||'',
+    date:o.date||o.resultDate||'',
+    competition:o.competition||o.meet||o.competitionName||'',
+    rank:o.rank||o.position||o.place||'',
+    points:o.points||o.score||''
+  }, Object.values(o||{}))).filter(m=>m.athlete && m.time);
+}
+function parseHtmlRankingRows(html){
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  let rows=[];
+  doc.querySelectorAll('table').forEach(table=>{
+    const trs=[...table.querySelectorAll('tr')];
+    if(trs.length<2) return;
+    const headers=[...trs[0].querySelectorAll('th,td')].map(x=>mapHeader(x.textContent));
+    trs.slice(1).forEach(tr=>{
+      const cells=[...tr.querySelectorAll('td,th')].map(x=>norm(x.textContent));
+      let obj={}; headers.forEach((h,i)=>obj[h]=cells[i]||'');
+      if(Object.values(obj).some(Boolean)) rows.push(obj);
+    });
+  });
+  return rows;
+}
+async function tryFetchRankingUrl(url){
+  let res=await fetch(url,{cache:'no-store'});
+  if(!res.ok) throw new Error('HTTP '+res.status+' en '+url);
+  const ct=res.headers.get('content-type')||'';
+  if(ct.includes('json')) return await res.json();
+  const txt=await res.text();
+  return {html:txt};
+}
+async function autoLiveImport(){
+  const candidates=[];
+  const saved=norm($('liveApiUrl')?.value||localStorage.getItem('wpsLiveApiUrl')||'');
+  if(saved) candidates.push(saved);
+  if(location.protocol.startsWith('http')) candidates.push('/api/wps-ranking');
+  // No intentamos IPC directo desde el navegador: queda bloqueado por CORS/X-Frame/anti-bot.
+  $('liveApiMsg').textContent='Probando lectura directa: '+candidates.join(' → ');
+  let lastErr='';
+  for(const url of [...new Set(candidates)]){
+    try{
+      const payload=await tryFetchRankingUrl(url);
+      const rows=normaliseLiveRows(payload);
+      if(!rows.length) throw new Error('La respuesta se recibió, pero no contenía filas de ranking reconocibles.');
+      rows.forEach(m=>marks.push(ensurePoints(m)));
+      save();
+      $('liveApiMsg').textContent=`Lectura LIVE correcta desde ${url}: ${rows.length} marcas añadidas. Total guardado: ${marks.length}.`;
+      go('rankings');
+      return;
+    }catch(e){ lastErr=e.message; }
+  }
+  $('liveApiMsg').textContent='No se pudo leer en directo desde el navegador. Último error: '+lastErr+'. Solución: abrir esta app desplegada en Vercel con la carpeta api incluida; el HTML local no puede saltarse CORS/anti-bot.';
+}
+async function fetchLiveJson(){
+  let u=norm($('liveApiUrl')?.value||localStorage.getItem('wpsLiveApiUrl')||'');
+  if(!u && location.protocol.startsWith('http')) u='/api/wps-ranking';
+  if(!u){$('liveApiMsg').textContent='Falta URL. Para directo real usa el paquete Vercel incluido o escribe /api/wps-ranking si está desplegado.';return}
+  saveLiveApi(); $('liveApiMsg').textContent='Leyendo ranking en directo desde '+u+' ...';
+  try{
+    let payload=await tryFetchRankingUrl(u);
+    let rows=normaliseLiveRows(payload);
+    if(!rows.length) throw new Error('No se detectaron filas válidas de ranking en la respuesta.');
+    rows.forEach(m=>marks.push(ensurePoints(m)));
+    save();
+    $('liveApiMsg').textContent=`Importadas ${rows.length} marcas LIVE. Total guardado: ${marks.length}.`;
+    go('rankings');
+  }catch(e){
+    $('liveApiMsg').textContent='No se pudo importar LIVE: '+e.message+'. Si estás abriendo el .html como archivo local, despliega el paquete Vercel incluido para evitar CORS.';
+  }
+}
+function initLive(){
+  let saved=localStorage.getItem('wpsLiveApiUrl')||'';
+  if(!saved && location.protocol.startsWith('http')) saved='/api/wps-ranking';
+  if($('liveApiUrl')&&!$('liveApiUrl').value)$('liveApiUrl').value=saved;
+}
+
+function refreshAll(){marks=marks.map(m=>ensurePoints(m));$('kpiMarks').textContent=marks.length;$('kpiAthletes').textContent=Object.keys(athleteGroups()).length;$('kpiParams').textContent=PARAMS.length;$('kpiRecords').textContent=records.length;let best=[...marks].map(m=>ensurePoints(m)).sort((a,b)=>(b.points||0)-(a.points||0)).slice(0,8);$('dashBest').innerHTML=best.map(m=>`<tr><td>${m.athlete}</td><td>${m.npc}</td><td>${m.event}</td><td>${m.class}</td><td>${fmtTime(m.seconds)}</td><td>${m.points||'—'}</td></tr>`).join('')||`<tr><td colspan="6" class="muted">Carga un CSV para empezar.</td></tr>`;renderRecords();}
+initTabs();populateBase();filterControls('rankFilters','rk');refreshAll();renderParams();calcPoints();
+</script>
+</body></html>

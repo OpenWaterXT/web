@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/wps-ranking", "dest": "/api/wps-ranking.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
